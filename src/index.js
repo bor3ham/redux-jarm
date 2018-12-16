@@ -8,14 +8,25 @@ function defaultFetch(url, config) {
 }
 
 function defaultReducer(state={
-  'hi': 'there',
+  remote: {},
+  local: {},
 }, action) {
   switch(action.type) {
-    case Actions.Keys.populateData:
-      return {
+    case Actions.Keys.populateData: {
+      let newState = {
         ...state,
-        'data': 'populated',
+        remote: {
+          ...state.remote,
+        },
       }
+      action.data.map((item) => {
+        newState.remote[item.type] = {
+          ...newState.remote[item.type],
+        }
+        newState.remote[item.type][item.id] = item
+      })
+      return newState
+    }
     default:
       return state
   }

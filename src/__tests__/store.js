@@ -3,9 +3,11 @@ import thunk from 'redux-thunk'
 
 import jarm from './jarm.js'
 
-const store = createStore(
-  jarm.reducer,
-  applyMiddleware(thunk)
-)
+function getStore() {
+  return createStore(
+    jarm.reducer,
+    applyMiddleware(thunk)
+  )
+}
 
-export default store
+export default getStore
