@@ -1,0 +1,38 @@
+{
+  "name": "redux-jarm",
+  "version": "0.0.1",
+  "description": "Offline-first redux ORM designed around JSONAPI servers.",
+  "main": "index.js",
+  "repository": "https://github.com/bor3ham/redux-jarm",
+  "author": "Michael Boreham",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.2.1",
+    "@babel/preset-env": "^7.2.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "^23.6.0",
+    "jest": "^23.6.0",
+    "jest-fetch-mock": "^2.1.0",
+    "regenerator-runtime": "^0.13.1"
+  },
+  "dependencies": {
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "automock": false,
+    "setupFiles": [
+      "./setup-jest.js"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/src/__tests__/jarm.js",
+      "<rootDir>/src/__tests__/store.js"
+    ]
+  }
+}
