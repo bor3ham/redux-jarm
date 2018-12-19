@@ -112,7 +112,6 @@ test('fetch 404', done => {
     {status: 404},
   )
   store.dispatch(jarm.fetch('/tasks/3', {}, {})).then((response) => {
-    console.log(response)
     fail(response)
     done()
   }).catch((error) => {
