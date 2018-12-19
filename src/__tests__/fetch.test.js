@@ -15,11 +15,22 @@ const testTask2 = {
     name: 'Trim the hedges',
   },
 }
+const testSite1 = {
+  type: 'Site',
+  id: 'aaa-003',
+  attributes: {
+    name: 'Uptick HQ',
+  },
+}
 const testDetailResponse = {
   data: testTask1,
 }
 const testListResponse = {
   data: [testTask1, testTask2],
+}
+const testListWithIncludeResponse = {
+  data: [testTask1],
+  included: [testSite1],
 }
 
 test('fetch from a list', done => {
@@ -42,6 +53,69 @@ test('fetch from a list', done => {
     })
     // expect outermost remote reference to be changed
     expect(oldState.remote).not.toBe(newState.remote)
+    done()
+  })
+})
+test('fetch from a detail', done => {
+  const store = getStore()
+  const oldState = store.getState()
+  fetch.mockResponseOnce(
+    JSON.stringify(testDetailResponse),
+    {status: 200},
+  )
+  store.dispatch(jarm.fetch('/tasks/1', {}, {})).then((response) => {
+    expect(response.data).toMatchObject(testDetailResponse)
+    const newState = store.getState()
+    expect(newState).toMatchObject({
+      'remote': {
+        [testTask1.type]: {
+          [testTask1.id]: testTask1,
+        },
+      },
+    })
+    // expect outermost remote reference to be changed
+    expect(oldState.remote).not.toBe(newState.remote)
+    done()
+  })
+})
+test('fetch from a list with an include', done => {
+  const store = getStore()
+  const oldState = store.getState()
+  fetch.mockResponseOnce(
+    JSON.stringify(testListWithIncludeResponse),
+    {status: 200},
+  )
+  store.dispatch(jarm.fetch('/tasks?include=site', {}, {})).then((response) => {
+    expect(response.data).toMatchObject(testListWithIncludeResponse)
+    const newState = store.getState()
+    expect(newState).toMatchObject({
+      'remote': {
+        [testTask1.type]: {
+          [testTask1.id]: testTask1,
+        },
+        [testSite1.type]: {
+          [testSite1.id]: testSite1,
+        },
+      },
+    })
+    // expect outermost remote reference to be changed
+    expect(oldState.remote).not.toBe(newState.remote)
+    done()
+  })
+})
+test('fetch 404', done => {
+  const store = getStore()
+  fetch.mockResponseOnce(
+    JSON.stringify({
+      error: 'Object not found',
+    }),
+    {status: 404},
+  )
+  store.dispatch(jarm.fetch('/tasks/3', {}, {})).then((response) => {
+    console.log(response)
+    fail(response)
+    done()
+  }).catch((error) => {
     done()
   })
 })

@@ -14,10 +14,16 @@ function defaultFetch(url, config={}, data={}) {
       },
       body: JSON.stringify(data),
     }).then((response) => {
+      if (response.status >= 400 && response.status < 600) {
+        throw(response)
+      }
       if (typeof response.json === 'function') {
         return response.json().then((parsedResponse) => {
           if ('data' in parsedResponse) {
             dispatch(this.populate(parsedResponse.data))
+          }
+          if ('included' in parsedResponse) {
+            dispatch(this.populate(parsedResponse.included))
           }
           return {
             ...response,
@@ -39,11 +45,22 @@ function defaultFetch(url, config={}, data={}) {
     }).catch((error) => {
       if (typeof error.json === 'function') {
         return error.json().catch((parseError) => {
-          return error
+          throw({
+            ...error,
+            data: {},
+          })
+        }).then((parsedError) => {
+          throw({
+            ...error,
+            data: parsedError,
+          })
         })
       }
       else {
-        return error
+        throw({
+          ...error,
+          data: {},
+        })
       }
     })
   }
