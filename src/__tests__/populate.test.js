@@ -33,7 +33,7 @@ test('populate from individual', () => {
   expect(oldState.remote).not.toBe(newState.remote)
 })
 
-test('populate twice from individual', () => {
+test('populate twice from individuals', () => {
   const store = getStore()
   const oldState = store.getState()
   store.dispatch(jarm.populate(testTask1))
@@ -54,6 +54,23 @@ test('populate twice from individual', () => {
   expect(middleState.remote).not.toBe(newState.remote)
   // expect type reference to have changed on the second call
   expect(middleState.remote[testTask1.type]).not.toBe(newState.remote[testTask1.type])
+})
+
+test('populate twice from duplicate individual', () => {
+  const store = getStore()
+  const oldState = store.getState()
+  store.dispatch(jarm.populate(testTask1))
+  const middleState = store.getState()
+  store.dispatch(jarm.populate(testTask1))
+  const newState = store.getState()
+
+  expect(newState).toMatchObject({
+    'remote': {
+      [testTask1.type]: {
+        [testTask1.id]: testTask1,
+      },
+    },
+  })
 })
 
 test('populate from set', () => {
