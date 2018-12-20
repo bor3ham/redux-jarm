@@ -12,13 +12,28 @@ function createJarm(config) {
     // jarm api - writing
     populate: function(data) {
       if (!Array.isArray(data)) {
-        return Actions.populateData([data])
+        return Actions.setRemoteData([data])
       }
       else {
-        return Actions.populateData(data)
+        return Actions.setRemoteData(data)
       }
     },
-    create: function(newInstance) {},
+    create: function(newFields) {
+      const template = (this.schema[newFields.type] || {}).newTemplate || {}
+      const newInstance = {
+        ...template,
+        ...newFields,
+        attributes: {
+          ...template.attributes,
+          ...newFields.attributes,
+        },
+        relationships: {
+          ...template.relationships,
+          ...newFields.relationships,
+        },
+      }
+      return Actions.create(newInstance)
+    },
     update: function(type, id, changes) {},
     discard: function(type, id) {},
     commit: function(type, id) {},
@@ -37,6 +52,8 @@ function createJarm(config) {
     annotate_status: function(store, instance) {},
   }
   merged.fetch = merged.fetch.bind(merged)
+  merged.populate = merged.populate.bind(merged)
+  merged.create = merged.create.bind(merged)
   return merged
 }
 export default createJarm

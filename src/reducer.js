@@ -3,9 +3,10 @@ import * as Actions from './actions.js'
 export default function reducer(state={
   remote: {},
   local: {},
+  new: {},
 }, action) {
   switch(action.type) {
-    case Actions.Keys.populateData: {
+    case Actions.Keys.setRemoteData: {
       let newState = {
         ...state,
         remote: {
@@ -15,9 +16,28 @@ export default function reducer(state={
       action.data.map((item) => {
         newState.remote[item.type] = {
           ...newState.remote[item.type],
+          [item.id]: item,
         }
-        newState.remote[item.type][item.id] = item
       })
+      return newState
+    }
+    case Actions.Keys.setLocalInstance: {
+      let newState = {
+        ...state,
+        local: {
+          ...state.local,
+          [action.instance.type]: {
+            ...state.local[action.instance.type],
+            [action.instance.id]: action.instance,
+          },
+        },
+      }
+      if (action.isNew) {
+        newState.new = {
+          ...newState.new,
+          [action.instance.id]: true,
+        }
+      }
       return newState
     }
     default:
