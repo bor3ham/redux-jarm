@@ -1,4 +1,5 @@
-import * as Actions from './actions.js'
+import * as ReducerActions from './reducer-actions.js'
+import * as AsyncActions from './async-actions.js'
 import defaultFetch from './default-fetch.js'
 import reducer from './reducer.js'
 
@@ -12,13 +13,16 @@ function createJarm(config) {
     // jarm api - writing
     populate: function(data) {
       if (!Array.isArray(data)) {
-        return Actions.setRemoteData([data])
+        return ReducerActions.setRemoteData([data])
       }
       else {
-        return Actions.setRemoteData(data)
+        return ReducerActions.setRemoteData(data)
       }
     },
     create: function(newFields) {
+      if ('type' in newFields === false) {
+        throw('No type in instance')
+      }
       const template = (this.schema[newFields.type] || {}).newTemplate || {}
       const newInstance = {
         ...template,
@@ -32,11 +36,13 @@ function createJarm(config) {
           ...newFields.relationships,
         },
       }
-      return Actions.create(newInstance)
+      return AsyncActions.create(newInstance)
     },
     update: function(type, id, changes) {},
     discard: function(type, id) {},
-    commit: function(type, id) {},
+    commit: function(type, id) {
+      return ReducerActions.commitLocalInstance(type, id)
+    },
     save: function(type, id) {},
     purge: function(type, id) {},
     // jarm api - reading

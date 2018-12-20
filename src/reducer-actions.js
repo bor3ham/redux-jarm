@@ -1,8 +1,7 @@
-import uuidv4 from 'uuid/v4'
-
 const ActionKeys = {
   setRemoteData: 'JARM_SET_REMOTE_DATA',
   setLocalInstance: 'JARM_SET_LOCAL_INSTANCE',
+  commitLocalInstance: 'JARM_COMMIT_LOCAL_INSTANCE',
 }
 
 function setRemoteData(data) {
@@ -20,19 +19,17 @@ function setLocalInstance(instance, isNew) {
   }
 }
 
-function create(newInstance) {
-  return (dispatch, getState) => {
-    const newId = uuidv4()
-    dispatch(setLocalInstance({
-      ...newInstance,
-      id: newId,
-    }, true))
-    return newId
+function commitLocalInstance(type, id) {
+  return {
+    type: ActionKeys.commitLocalInstance,
+    instanceType: type,
+    id,
   }
 }
 
 export {
   ActionKeys as Keys,
   setRemoteData,
-  create,
+  setLocalInstance,
+  commitLocalInstance,
 }

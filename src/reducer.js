@@ -1,9 +1,11 @@
-import * as Actions from './actions.js'
+import * as Actions from './reducer-actions.js'
 
 export default function reducer(state={
   remote: {},
   local: {},
   new: {},
+  committed: {},
+  pending: {},
 }, action) {
   switch(action.type) {
     case Actions.Keys.setRemoteData: {

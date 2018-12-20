@@ -18,3 +18,15 @@ test('create a draft', () => {
   expect(newState.local[createData.type][newId]).toMatchObject(createData)
   expect(newState.new[newId]).toBe(true)
 })
+
+test('create a draft with no type', () => {
+  const store = getStore()
+  const createData = {
+    attributes: {
+      name: 'Mow the lawn',
+    },
+  }
+  expect(() => {
+    store.dispatch(jarm.create(createData))
+  }).toThrow()
+})
