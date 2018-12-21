@@ -40,11 +40,11 @@ function createJarm(config) {
     },
     update: function(type, id, changes) {},
     discard: function(type, id) {},
+    delete: function(type, id) {},
     commit: function(type, id) {
       return ReducerActions.commitLocalInstance(type, id)
     },
     save: function(type, id) {},
-    purge: function(type, id) {},
     // jarm api - reading
     get: function(store, type, id) {
       let instance = merged.get_local(store, type, id)
@@ -53,9 +53,10 @@ function createJarm(config) {
     },
     get_local: function(store, type, id) {},
     get_remote: function(store, type, id) {},
+    get_error: function(store, type, id) {},
+    annotate_status: function(store, instance) {},
     retree_local: function(store, instance) {},
     retree_remote: function(store, instance) {},
-    annotate_status: function(store, instance) {},
   }
   merged.fetch = merged.fetch.bind(merged)
   merged.populate = merged.populate.bind(merged)

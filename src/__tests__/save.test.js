@@ -21,3 +21,8 @@ test('placeholder', () => {
 // save changed resulting in bad request
 // save changed resulting in server error
 // save changed resulting in transport error, then retry successfully
+
+// save a deletion
+// save a deletion where instance has other relations in store
+// save a deletion resulting in bad request
+// save a deletion resulting in server error
