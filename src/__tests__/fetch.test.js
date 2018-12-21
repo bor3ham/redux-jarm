@@ -40,7 +40,7 @@ test('fetch from a list', done => {
     JSON.stringify(testListResponse),
     {status: 200},
   )
-  store.dispatch(jarm.fetch('/tasks', {}, {})).then((response) => {
+  store.dispatch(jarm.fetch('/tasks/', {}, {})).then((response) => {
     expect(response.data).toMatchObject(testListResponse)
     const newState = store.getState()
     expect(newState).toMatchObject({
@@ -63,7 +63,7 @@ test('fetch from a detail', done => {
     JSON.stringify(testDetailResponse),
     {status: 200},
   )
-  store.dispatch(jarm.fetch('/tasks/1', {}, {})).then((response) => {
+  store.dispatch(jarm.fetch('/tasks/aaa-001/', {}, {})).then((response) => {
     expect(response.data).toMatchObject(testDetailResponse)
     const newState = store.getState()
     expect(newState).toMatchObject({
@@ -85,7 +85,7 @@ test('fetch from a list with an include', done => {
     JSON.stringify(testListWithIncludeResponse),
     {status: 200},
   )
-  store.dispatch(jarm.fetch('/tasks?include=site', {}, {})).then((response) => {
+  store.dispatch(jarm.fetch('/tasks/?include=site', {}, {})).then((response) => {
     expect(response.data).toMatchObject(testListWithIncludeResponse)
     const newState = store.getState()
     expect(newState).toMatchObject({
@@ -111,7 +111,7 @@ test('fetch 404', done => {
     }),
     {status: 404},
   )
-  store.dispatch(jarm.fetch('/tasks/3', {}, {})).then((response) => {
+  store.dispatch(jarm.fetch('/tasks/aaa-003/', {}, {})).then((response) => {
     fail(response)
     done()
   }).catch((error) => {

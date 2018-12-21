@@ -6,6 +6,7 @@ export default function reducer(state={
   new: {},
   committed: {},
   pending: {},
+  errors: {},
 }, action) {
   switch(action.type) {
     case Actions.Keys.setRemoteData: {
@@ -41,6 +42,18 @@ export default function reducer(state={
         }
       }
       return newState
+    }
+    case Actions.Keys.commitLocalInstance: {
+      return {
+        ...state,
+        committed: {
+          ...state.committed,
+          [action.instanceType]: {
+            ...state.committed[action.instanceType],
+            [action.id]: true,
+          },
+        },
+      }
     }
     default:
       return state

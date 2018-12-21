@@ -30,3 +30,6 @@ test('create a draft with no type', () => {
     store.dispatch(jarm.create(createData))
   }).toThrow()
 })
+
+// create a draft that extends a new template
+// create a draft that overrides a new template

@@ -13,5 +13,8 @@ test('commit a created instance', () => {
   const oldState = store.getState()
   store.dispatch(jarm.commit(createData.type, newId))
   const newState = store.getState()
-  // expect(oldState.committed).not.toBe(newState.committed)
+  expect(oldState.committed).not.toBe(newState.committed)
 })
+
+// commit changes to existing instance
+// commit changes to instance that does not exist
