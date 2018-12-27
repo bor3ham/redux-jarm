@@ -5,8 +5,8 @@ test('placeholder', () => {
   const store = getStore()
 })
 
-// get error when none exists
-// get error resulting from creation
-// get error resulting from modification
-// get error resulting from deletion
-// get error after successful retry
+// todo: get error when none exists
+// todo: get error resulting from creation
+// todo: get error resulting from modification
+// todo: get error resulting from deletion
+// todo: get error after successful retry

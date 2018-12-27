@@ -5,33 +5,33 @@ test('placeholder', () => {
   const store = getStore()
 })
 
-// retree nothing
+// todo: retree nothing
 
-// retree direct with changes
-// retree set with changes
+// todo: retree direct with changes
+// todo: retree set with changes
 
-// retree direct with changes -> direct with changes
-// retree direct with changes -> set with changes
-// retree set with changes -> direct with changes
-// retree set with changes -> set with changes
+// todo: retree direct with changes -> direct with changes
+// todo: retree direct with changes -> set with changes
+// todo: retree set with changes -> direct with changes
+// todo: retree set with changes -> set with changes
 
-// retree direct without changes -> direct with changes
-// retree direct without changes -> set with changes
-// retree set without changes -> direct with changes
-// retree set without changes -> set with changes
+// todo: retree direct without changes -> direct with changes
+// todo: retree direct without changes -> set with changes
+// todo: retree set without changes -> direct with changes
+// todo: retree set without changes -> set with changes
 
-// retree direct with changes -> direct without changes
-// retree direct with changes -> set without changes
-// retree set with changes -> direct without changes
-// retree set with changes -> set without changes
+// todo: retree direct with changes -> direct without changes
+// todo: retree direct with changes -> set without changes
+// todo: retree set with changes -> direct without changes
+// todo: retree set with changes -> set without changes
 
-// retree direct without changes -> direct without changes
-// retree direct without changes -> set without changes
-// retree set without changes -> direct without changes
-// retree set without changes -> set without changes
+// todo: retree direct without changes -> direct without changes
+// todo: retree direct without changes -> set without changes
+// todo: retree set without changes -> direct without changes
+// todo: retree set without changes -> set without changes
 
-// retree recurse to top level
-// retree direct -> set recurse
-// retree direct -> direct recurse
-// retree set -> direct recurse
-// retree set -> set recurse
+// todo: retree recurse to top level
+// todo: retree direct -> set recurse
+// todo: retree direct -> direct recurse
+// todo: retree set -> direct recurse
+// todo: retree set -> set recurse

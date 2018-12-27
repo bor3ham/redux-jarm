@@ -7,6 +7,7 @@ function createJarm(config) {
   const merged = {
     fetch: defaultFetch,
     schema: {},
+    statusKey: '__status',
     ...config,
     reducer,
 
@@ -38,7 +39,9 @@ function createJarm(config) {
       }
       return AsyncActions.create(newInstance)
     },
-    update: function(type, id, changes) {},
+    update: function(type, id, changes) {
+      return ReducerActions.extendLocalInstance(type, id, changes)
+    },
     discard: function(type, id) {},
     delete: function(type, id) {},
     commit: function(type, id) {
@@ -54,13 +57,61 @@ function createJarm(config) {
     get_local: function(store, type, id) {},
     get_remote: function(store, type, id) {},
     get_error: function(store, type, id) {},
-    annotate_status: function(store, instance) {},
+    annotate_status: function(store, instance) {
+      if (instance === null) {
+        return instance
+      }
+      if (!instance.type) {
+        throw('No type in instance')
+      }
+      if (!instance.id) {
+        throw('No id in instance')
+      }
+      const instanceKey = `${instance.type}-${instance.id}`
+      const state = store.getState()
+      const local = state.local[instance.type] || {}
+      const remote = state.remote[instance.type] || {}
+      const isCommitted = !!state.committed[instanceKey]
+      const isPending = !!state.pending[instanceKey]
+      const isNew = !!state.new[instanceKey]
+      let status = 'unchanged'
+      if (local[instance.id]) {
+        if (isNew) {
+          if (isPending) {
+            status = 'draft-pending'
+          }
+          else if (isCommitted) {
+            status = 'draft-committed'
+          }
+          else {
+            status = 'draft'
+          }
+        }
+        else {
+          if (isPending) {
+            status = 'modified-pending'
+          }
+          else if (isCommitted) {
+            status = 'modified-committed'
+          }
+          else {
+            status = 'modified'
+          }
+        }
+        // todo: add deleted states
+      }
+      return {
+        ...instance,
+        [this.statusKey]: status,
+      }
+    },
     retree_local: function(store, instance) {},
     retree_remote: function(store, instance) {},
   }
   merged.fetch = merged.fetch.bind(merged)
   merged.populate = merged.populate.bind(merged)
   merged.create = merged.create.bind(merged)
+  merged.annotate_status = merged.annotate_status.bind(merged)
   return merged
 }
 export default createJarm

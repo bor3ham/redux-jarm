@@ -119,5 +119,5 @@ test('fetch 404', done => {
   })
 })
 
-// fetch an item that is unchanged locally but has been remotely deleted
-// fetch an item that is changed locally but has been remotely deleted
+// todo: fetch an item that is unchanged locally but has been remotely deleted
+// todo: fetch an item that is changed locally but has been remotely deleted

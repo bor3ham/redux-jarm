@@ -5,7 +5,7 @@ test('placeholder', () => {
   const store = getStore()
 })
 
-// get unchanged instance
-// get changed instance
-// get unpushed local instance
-// get non existent instance
+// todo: get unchanged instance
+// todo: get changed instance
+// todo: get unpushed local instance
+// todo: get non existent instance

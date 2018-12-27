@@ -16,7 +16,7 @@ test('create a draft', () => {
   expect(oldState.new).not.toBe(newState.new)
   expect(oldState.local[createData.type]).not.toBe(newState.local[createData.type])
   expect(newState.local[createData.type][newId]).toMatchObject(createData)
-  expect(newState.new[newId]).toBe(true)
+  expect(newState.new[`${createData.type}-${newId}`]).toBe(true)
 })
 
 test('create a draft with no type', () => {
@@ -31,5 +31,5 @@ test('create a draft with no type', () => {
   }).toThrow()
 })
 
-// create a draft that extends a new template
-// create a draft that overrides a new template
+// todo: create a draft that extends a new template
+// todo: create a draft that overrides a new template

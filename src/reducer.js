@@ -38,20 +38,57 @@ export default function reducer(state={
       if (action.isNew) {
         newState.new = {
           ...newState.new,
-          [action.instance.id]: true,
+          [`${action.instance.type}-${action.instance.id}`]: true,
         }
+      }
+      let instanceKey = `${action.instance.type}-${action.instance.id}`
+      if (instanceKey in newState.committed) {
+        newState.commited = {
+          ...newState.committed
+        }
+        delete newState.committed[instanceKey]
+      }
+      return newState
+    }
+    case Actions.Keys.extendLocalInstance: {
+      let existingInstance = (state.local[action.instanceType] || {})[action.id] || {}
+      let newState = {
+        ...state,
+        local: {
+          ...state.local,
+          [action.instanceType]: {
+            ...state.local[action.instanceType],
+            [action.id]: {
+              ...existingInstance,
+              ...action.changes,
+              attributes: {
+                ...existingInstance.attributes,
+                ...action.changes.attributes,
+              },
+              relationships: {
+                ...existingInstance.relationships,
+                ...action.changes.relationships,
+              },
+            },
+          },
+        },
+      }
+      let instanceKey = `${action.instanceType}-${action.id}`
+      if (instanceKey in newState.committed) {
+        newState.commited = {
+          ...newState.committed
+        }
+        delete newState.committed[instanceKey]
       }
       return newState
     }
     case Actions.Keys.commitLocalInstance: {
+      const key = `${action.instanceType}-${action.id}`
       return {
         ...state,
         committed: {
           ...state.committed,
-          [action.instanceType]: {
-            ...state.committed[action.instanceType],
-            [action.id]: true,
-          },
+          [key]: true,
         },
       }
     }

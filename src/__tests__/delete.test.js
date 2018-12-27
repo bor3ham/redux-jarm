@@ -5,8 +5,8 @@ test('placeholder', () => {
   const store = getStore()
 })
 
-// delete unchanged instance
-// delete uncommitted changed instance
-// delete committed changed instance (not pending)
-// delete committed changed instance (pending)
-// delete instance that does not exist
+// todo: delete unchanged instance
+// todo: delete uncommitted changed instance
+// todo: delete committed changed instance (not pending)
+// todo: delete committed changed instance (pending)
+// todo: delete instance that does not exist

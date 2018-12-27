@@ -5,24 +5,24 @@ test('placeholder', () => {
   const store = getStore()
 })
 
-// save a commited created instance
-// save a commited created instance with no schema url
-// save a commited changed instance
-// save a draft created instance
-// save a draft changed instance
-// save a non existent instance
+// todo: save a commited created instance
+// todo: save a commited created instance with no schema url
+// todo: save a commited changed instance
+// todo: save a draft created instance
+// todo: save a draft changed instance
+// todo: save a non existent instance
 
-// save created resulting in bad request
-// save created resulting in server error
-// save created resulting in complete transport error, then retry successfully
-// save created resulting in perceived transport error, then retry and handle already exists
-// save created resulting in perceived transport error, then discover instance through fetch
+// todo: save created resulting in bad request
+// todo: save created resulting in server error
+// todo: save created resulting in complete transport error, then retry successfully
+// todo: save created resulting in perceived transport error, then retry and handle already exists
+// todo: save created resulting in perceived transport error, then discover instance through fetch
 
-// save changed resulting in bad request
-// save changed resulting in server error
-// save changed resulting in transport error, then retry successfully
+// todo: save changed resulting in bad request
+// todo: save changed resulting in server error
+// todo: save changed resulting in transport error, then retry successfully
 
-// save a deletion
-// save a deletion where instance has other relations in store
-// save a deletion resulting in bad request
-// save a deletion resulting in server error
+// todo: save a deletion
+// todo: save a deletion where instance has other relations in store
+// todo: save a deletion resulting in bad request
+// todo: save a deletion resulting in server error

@@ -5,11 +5,11 @@ test('placeholder', () => {
   const store = getStore()
 })
 
-// discard uncommitted new instance
-// discard uncommitted changed instance
-// discard committed new instance (not pending)
-// discard committed changed instance (not pending)
-// discard committed new instance (pending)
-// discard committed changed instance (pending)
-// discard non existent instance
-// discard unchanged instance
+// todo: discard uncommitted new instance
+// todo: discard uncommitted changed instance
+// todo: discard committed new instance (not pending)
+// todo: discard committed changed instance (not pending)
+// todo: discard committed new instance (pending)
+// todo: discard committed changed instance (pending)
+// todo: discard non existent instance
+// todo: discard unchanged instance
