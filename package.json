@@ -33,7 +33,8 @@
     "testPathIgnorePatterns": [
       "/node_modules/",
       "<rootDir>/src/__tests__/jarm.js",
-      "<rootDir>/src/__tests__/store.js"
+      "<rootDir>/src/__tests__/store.js",
+      "<rootDir>/src/__tests__/utils.js"
     ]
   }
 }

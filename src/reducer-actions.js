@@ -3,6 +3,8 @@ const ActionKeys = {
   setLocalInstance: 'JARM_SET_LOCAL_INSTANCE',
   extendLocalInstance: 'JARM_EXTEND_LOCAL_INSTANCE',
   commitLocalInstance: 'JARM_COMMIT_LOCAL_INSTANCE',
+  recordSaving: 'JARM_RECORD_SAVING',
+  recordCreationSuccess: 'JARM_RECORD_CREATION_SUCCESS',
 }
 
 function setRemoteData(data) {
@@ -37,10 +39,28 @@ function commitLocalInstance(type, id) {
   }
 }
 
+function recordSaving(type, id) {
+  return {
+    type: ActionKeys.recordSaving,
+    instanceType: type,
+    id,
+  }
+}
+
+function recordCreationSuccess(initialId, createdInstance) {
+  return {
+    type: ActionKeys.recordCreationSuccess,
+    initialId,
+    createdInstance,
+  }
+}
+
 export {
   ActionKeys as Keys,
   setRemoteData,
   setLocalInstance,
   extendLocalInstance,
   commitLocalInstance,
+  recordSaving,
+  recordCreationSuccess,
 }

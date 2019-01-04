@@ -92,6 +92,49 @@ export default function reducer(state={
         },
       }
     }
+    case Actions.Keys.recordSaving: {
+      const key = `${action.instanceType}-${action.id}`
+      return {
+        ...state,
+        pending: {
+          ...state.pending,
+          [key]: true,
+        },
+      }
+    }
+    case Actions.Keys.recordCreationSuccess: {
+      const newState = {
+        ...state,
+      }
+      const key = `${action.createdInstance.type}-${action.initialId}`
+      if (key in newState.pending) {
+        newState.pending = {
+          ...newState.pending,
+        }
+        delete newState.pending[key]
+      }
+      if (key in newState.new) {
+        newState.new = {
+          ...newState.new,
+        }
+        delete newState.new[key]
+      }
+      if (action.createdInstance.type in newState.local) {
+        if (action.initialId in newState.local[action.createdInstance.type]) {
+          newState.local = {
+            ...newState.local,
+            [action.createdInstance.type]: {
+              ...newState.local[action.createdInstance.type],
+            },
+          }
+          delete newState.local[action.createdInstance.type][action.initialId]
+        }
+      }
+      if (action.createdInstance.id != action.intialId) {
+        // todo: update all ids if it has changed
+      }
+      return newState
+    }
     default:
       return state
   }
