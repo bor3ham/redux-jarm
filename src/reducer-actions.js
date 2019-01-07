@@ -5,6 +5,7 @@ const ActionKeys = {
   commitLocalInstance: 'JARM_COMMIT_LOCAL_INSTANCE',
   recordSaving: 'JARM_RECORD_SAVING',
   recordCreationSuccess: 'JARM_RECORD_CREATION_SUCCESS',
+  recordCreationError: 'JARM_RECORD_CREATION_ERROR',
 }
 
 function setRemoteData(data) {
@@ -54,6 +55,14 @@ function recordCreationSuccess(initialId, createdInstance) {
     createdInstance,
   }
 }
+function recordCreationError(type, id, error) {
+  return {
+    type: ActionKeys.recordCreationError,
+    instanceType: type,
+    id,
+    error,
+  }
+}
 
 export {
   ActionKeys as Keys,
@@ -63,4 +72,5 @@ export {
   commitLocalInstance,
   recordSaving,
   recordCreationSuccess,
+  recordCreationError,
 }

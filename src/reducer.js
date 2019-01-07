@@ -135,6 +135,23 @@ export default function reducer(state={
       }
       return newState
     }
+    case Actions.Keys.recordCreationError: {
+      const newState = {
+        ...state,
+      }
+      const key = `${action.instanceType}-${action.id}`
+      if (key in newState.pending) {
+        newState.pending = {
+          ...newState.pending,
+        }
+        delete newState.pending[key]
+      }
+      newState.errors = {
+        ...newState.errors,
+        [key]: action.error,
+      }
+      return newState
+    }
     default:
       return state
   }
