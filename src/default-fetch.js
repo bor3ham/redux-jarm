@@ -1,65 +1,63 @@
+function attemptToParseJson(response) {
+  return new Promise((resolve, reject) => {
+    if (response && typeof response.json === 'function') {
+      response.json().then((parsed) => {
+        resolve({
+          ...response,
+          data: parsed,
+          status: response.status,
+        })
+      }).catch((parseError) => {
+        resolve({
+          ...response,
+          data: {},
+          status: response.status,
+        })
+      })
+    }
+    else {
+      resolve(response)
+    }
+  })
+}
+
 export default function defaultFetch(url, config={}, data={}) {
   return (dispatch, getState) => {
     if (!this.baseUrl) {
       throw 'No base url defined'
     }
-    return fetch(url, {
-      ...config,
-      headers: {
-        'Accept': 'application/vnd.api+json',
-        'Content-Type': 'application/vnd.api+json',
-        ...config.headers,
-      },
-      body: JSON.stringify(data),
-    }).then((response) => {
-      if (response.status >= 400 && response.status < 600) {
-        throw(response)
-      }
-      if (typeof response.json === 'function') {
-        return response.json().then((parsedResponse) => {
-          if ('data' in parsedResponse) {
-            dispatch(this.populate(parsedResponse.data))
+    return new Promise((resolve, reject) => {
+      fetch(url, {
+        ...config,
+        headers: {
+          'Accept': 'application/vnd.api+json',
+          'Content-Type': 'application/vnd.api+json',
+          ...config.headers,
+        },
+        body: JSON.stringify(data),
+      }).then(attemptToParseJson).then((response) => {
+        const errorResponse = (response.status >= 400 && response.status < 600)
+        if (!errorResponse) {
+          if ('data' in response) {
+            if ('data' in response.data) {
+              dispatch(this.populate(response.data.data))
+            }
+            if ('included' in response.data) {
+              dispatch(this.populate(response.data.included))
+            }
           }
-          if ('included' in parsedResponse) {
-            dispatch(this.populate(parsedResponse.included))
-          }
-          return {
-            ...response,
-            data: parsedResponse,
-          }
-        }).catch((parseError) => {
-          return {
-            ...response,
-            data: {},
-          }
-        })
-      }
-      else {
-        return {
-          ...response,
-          data: {},
         }
-      }
-    }).catch((error) => {
-      if (typeof error.json === 'function') {
-        return error.json().catch((parseError) => {
-          throw({
-            ...error,
-            data: {},
-          })
-        }).then((parsedError) => {
-          throw({
-            ...error,
-            data: parsedError,
-          })
+        if (errorResponse) {
+          reject(response)
+        }
+        else {
+          resolve(response)
+        }
+      }).catch((errorResponse) => {
+        attemptToParseJson(errorResponse).then((parsedError) => {
+          reject(parsedError)
         })
-      }
-      else {
-        throw({
-          ...error,
-          data: {},
-        })
-      }
+      })
     })
   }
 }

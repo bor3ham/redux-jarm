@@ -20,16 +20,20 @@ function save(type, id, url, createIncludes, updateIncludes, fetchAction) {
 
     dispatch(ReducerActions.recordSaving(type, id))
     return dispatch(fetchAction(url, {method: 'POST',}, instanceData)).then(response => {
-      // todo: check if created or no content
       dispatch(ReducerActions.recordCreationSuccess(id, response.data.data))
-      return response.data
+      return response.data.data
     }).catch((error) => {
-      let errorData = error
-      if (errorData && 'data' in errorData) {
-        errorData = errorData.data
+      // if conflict - already posted to server
+      if (error.status === 409 && error.data.data) {
+        dispatch(ReducerActions.setRemoteData([error.data.data]))
+        dispatch(ReducerActions.recordCreationSuccess(id, error.data.data))
+        return error.data.data
       }
-      dispatch(ReducerActions.recordCreationError(type, id, errorData))
-      throw error
+      // otherwise genuine error
+      else {
+        dispatch(ReducerActions.recordCreationError(type, id, error.data ? error.data : error))
+        throw error
+      }
     })
   }
 }

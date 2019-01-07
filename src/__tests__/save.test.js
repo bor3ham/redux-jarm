@@ -36,6 +36,7 @@ test('save a committed created instance (same id result)', done => {
     expect(completeState.pending[itemKey]).toBeFalsy()
     expect(completeState.new[itemKey]).toBeFalsy()
     expect(completeState.local[testTask1.type][testTask1.id]).toBe(undefined)
+    expect(completeState.remote[testTask1.type][testTask1.id]).toMatchObject(created)
     done()
   })
 })
@@ -98,11 +99,41 @@ test('save created resulting in complete transport error, then retry successfull
       expect(completeState.pending[itemKey]).toBeFalsy()
       expect(completeState.new[itemKey]).toBeFalsy()
       expect(completeState.local[testTask1.type][testTask1.id]).toBe(undefined)
+      expect(completeState.remote[testTask1.type][testTask1.id]).toMatchObject(created)
       done()
     })
   })
 })
-// todo: save created resulting in perceived transport error, then retry and handle already exists
+test('save created resulting in perceived transport error, then retry but already exists', done => {
+  const store = getStore()
+  store.dispatch(jarm.create(testTask1))
+  store.dispatch(jarm.commit(testTask1.type, testTask1.id))
+
+  const itemKey = `${testTask1.type}-${testTask1.id}`
+  fetch.mockRejectOnce(new Error('Some transport error'))
+  store.dispatch(jarm.save(testTask1.type, testTask1.id)).then((created) => {
+    fail('Should not have been able to create instance')
+  }).catch((error) => {
+    let erroredState = store.getState()
+    expect(error).toBeTruthy()
+    expect(erroredState.errors[itemKey]).toBeTruthy()
+    expect(erroredState.pending[itemKey]).toBeFalsy()
+    fetch.mockResponseOnce(
+      JSON.stringify({
+        data: testTask1,
+      }),
+      {status: 409},
+    )
+    store.dispatch(jarm.save(testTask1.type, testTask1.id)).then((created) => {
+      const completeState = store.getState()
+      expect(completeState.pending[itemKey]).toBeFalsy()
+      expect(completeState.new[itemKey]).toBeFalsy()
+      expect(completeState.local[testTask1.type][testTask1.id]).toBe(undefined)
+      expect(completeState.remote[testTask1.type][testTask1.id]).toMatchObject(created)
+      done()
+    })
+  })
+})
 // todo: save created resulting in perceived transport error, then discover instance through fetch
 
 // todo: save changed resulting in bad request
