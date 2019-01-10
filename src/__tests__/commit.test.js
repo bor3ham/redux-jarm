@@ -21,3 +21,4 @@ test('commit a created instance', () => {
 
 // todo: commit changes to existing instance
 // todo: commit changes to instance that does not exist
+// todo: commit to a local deletion

@@ -10,6 +10,8 @@ const testTask1 = {
   },
 }
 
+// todo: save a non-committed created instance
+
 test('save a committed created instance (same id result)', done => {
   const store = getStore()
   store.dispatch(jarm.create(testTask1))
@@ -40,14 +42,13 @@ test('save a committed created instance (same id result)', done => {
     done()
   })
 })
+
 test('save a commited created instance (different id result)', () => {
   const store = getStore()
   // todo: finish
 })
-// todo: save a commited created instance with no schema url
-// todo: save a commited changed instance
-// todo: save a draft created instance
-// todo: save a draft changed instance
+
+// todo: save a created instance with no schema url
 // todo: save a non existent instance
 
 // todo: save created resulting in bad request
@@ -74,6 +75,7 @@ test('save created resulting in server error', done => {
     done()
   })
 })
+
 test('save created resulting in complete transport error, then retry successfully', done => {
   const store = getStore()
   store.dispatch(jarm.create(testTask1))
@@ -104,6 +106,7 @@ test('save created resulting in complete transport error, then retry successfull
     })
   })
 })
+
 test('save created resulting in perceived transport error, then retry but already exists', done => {
   const store = getStore()
   store.dispatch(jarm.create(testTask1))
@@ -134,13 +137,7 @@ test('save created resulting in perceived transport error, then retry but alread
     })
   })
 })
+
 // todo: save created resulting in perceived transport error, then discover instance through fetch
-
-// todo: save changed resulting in bad request
-// todo: save changed resulting in server error
-// todo: save changed resulting in transport error, then retry successfully
-
-// todo: save a deletion
-// todo: save a deletion where instance has other relations in store
-// todo: save a deletion resulting in bad request
-// todo: save a deletion resulting in server error
+// todo: save an already pending creation
+// todo: save a creation with ?include

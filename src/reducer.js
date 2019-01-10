@@ -82,6 +82,26 @@ export default function reducer(state={
       }
       return newState
     }
+    case Actions.Keys.deleteLocalInstance: {
+      let newState = {
+        ...state,
+        local: {
+          ...state.local,
+          [action.instanceType]: {
+            ...state.local[action.instanceType],
+            [action.id]: false,
+          },
+        },
+      }
+      let instanceKey = `${action.instanceType}-${action.id}`
+      if (instanceKey in newState.committed) {
+        newState.commited = {
+          ...newState.committed
+        }
+        delete newState.committed[instanceKey]
+      }
+      return newState
+    }
     case Actions.Keys.commitLocalInstance: {
       const key = `${action.instanceType}-${action.id}`
       return {
