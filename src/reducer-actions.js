@@ -5,8 +5,8 @@ const ActionKeys = {
   deleteLocalInstance: 'JARM_DELETE_LOCAL_INSTANCE',
   commitLocalInstance: 'JARM_COMMIT_LOCAL_INSTANCE',
   recordSaving: 'JARM_RECORD_SAVING',
-  recordCreationSuccess: 'JARM_RECORD_CREATION_SUCCESS',
-  recordCreationError: 'JARM_RECORD_CREATION_ERROR',
+  recordUpdateSuccess: 'JARM_RECORD_UPDATE_SUCCESS',
+  recordUpdateError: 'JARM_RECORD_UPDATE_ERROR',
 }
 
 function setRemoteData(data) {
@@ -56,16 +56,16 @@ function recordSaving(type, id) {
   }
 }
 
-function recordCreationSuccess(initialId, createdInstance) {
+function recordUpdateSuccess(initialId, createdInstance) {
   return {
-    type: ActionKeys.recordCreationSuccess,
+    type: ActionKeys.recordUpdateSuccess,
     initialId,
     createdInstance,
   }
 }
-function recordCreationError(type, id, error) {
+function recordUpdateError(type, id, error) {
   return {
-    type: ActionKeys.recordCreationError,
+    type: ActionKeys.recordUpdateError,
     instanceType: type,
     id,
     error,
@@ -80,6 +80,6 @@ export {
   deleteLocalInstance,
   commitLocalInstance,
   recordSaving,
-  recordCreationSuccess,
-  recordCreationError,
+  recordUpdateSuccess,
+  recordUpdateError,
 }

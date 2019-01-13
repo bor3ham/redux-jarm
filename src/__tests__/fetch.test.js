@@ -51,7 +51,7 @@ test('fetch from a list', done => {
         },
       },
     })
-    // expect outermost remote reference to be changed
+    // expect state to have not been mutated
     expect(oldState.remote).not.toBe(newState.remote)
     done()
   })
@@ -73,7 +73,7 @@ test('fetch from a detail', done => {
         },
       },
     })
-    // expect outermost remote reference to be changed
+    // expect state to have not been mutated
     expect(oldState.remote).not.toBe(newState.remote)
     done()
   })
@@ -98,7 +98,7 @@ test('fetch from a list with an include', done => {
         },
       },
     })
-    // expect outermost remote reference to be changed
+    // expect state to have not been mutated
     expect(oldState.remote).not.toBe(newState.remote)
     done()
   })

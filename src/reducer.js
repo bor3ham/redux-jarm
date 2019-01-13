@@ -144,7 +144,7 @@ export default function reducer(state={
         },
       }
     }
-    case Actions.Keys.recordCreationSuccess: {
+    case Actions.Keys.recordUpdateSuccess: {
       const newState = {
         ...state,
       }
@@ -177,7 +177,7 @@ export default function reducer(state={
       }
       return newState
     }
-    case Actions.Keys.recordCreationError: {
+    case Actions.Keys.recordUpdateError: {
       const newState = {
         ...state,
       }

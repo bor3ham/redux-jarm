@@ -33,10 +33,6 @@ test('save a committed created instance (same id result)', done => {
     {status: 201},
     delay
   )
-  setTimeout(() => {
-    const pendingState = store.getState()
-    expect(pendingState.pending[key]).toBeTruthy()
-  }, delay / 2)
   store.dispatch(jarm.save(testTask1.type, createdId)).then((created) =>  {
     const completeState = store.getState()
     expect(completeState.pending[key]).toBeFalsy()
@@ -45,6 +41,8 @@ test('save a committed created instance (same id result)', done => {
     expect(completeState.remote[testTask1.type][createdId]).toMatchObject(created)
     done()
   })
+  const pendingState = store.getState()
+  expect(pendingState.pending[key]).toBeTruthy()
 })
 
 test('save a commited created instance (different id result)', () => {

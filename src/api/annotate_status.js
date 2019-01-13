@@ -16,7 +16,18 @@ export default function(store, instance) {
   const isPending = !!state.pending[instanceKey]
   const isNew = !!state.new[instanceKey]
   let status = 'unchanged'
-  if (local[instance.id]) {
+  if (local[instance.id] === false) {
+    if (isPending) {
+      status = 'deleted-pending'
+    }
+    else if (isCommitted) {
+      status = 'deleted-committed'
+    }
+    else {
+      status = 'deleted'
+    }
+  }
+  else if (local[instance.id]) {
     if (isNew) {
       if (isPending) {
         status = 'draft-pending'
@@ -39,7 +50,6 @@ export default function(store, instance) {
         status = 'modified'
       }
     }
-    // todo: add deleted states
   }
   return {
     ...instance,

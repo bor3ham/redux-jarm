@@ -1,5 +1,6 @@
 import getStore from './store.js'
 import jarm from './jarm.js'
+import { mockOnceDelay } from './utils.js'
 
 const testTask1 = {
   type: 'Task',
@@ -59,7 +60,20 @@ test('annotate status of a committed draft', () => {
   expect(jarm.annotate_status(store, created)[jarm.statusKey]).toBe('draft-committed')
 })
 
-// todo: annotate status of a draft-saving
+test('annotate status of a draft-pending', () => {
+  const store = getStore()
+  const newId = store.dispatch(jarm.create(testTask1))
+  const created = {
+    ...testTask1,
+    id: newId,
+  }
+  const delay = 200
+  mockOnceDelay({
+    data: created,
+  }, {status: 201}, delay)
+  store.dispatch(jarm.save(created.type, created.id))
+  expect(jarm.annotate_status(store, created)[jarm.statusKey]).toBe('draft-pending')
+})
 
 test('annotate status of modified', () => {
   const store = getStore()
@@ -72,8 +86,65 @@ test('annotate status of modified', () => {
   expect(jarm.annotate_status(store, testTask1)[jarm.statusKey]).toBe('modified')
 })
 
-// todo: annotate status of a modified-committed
-// todo: annotate status of a modified-saving
-// todo: annotate status of a deleted
-// todo: annotate status of a deleted-committed
-// todo: annotate status of a deleted-saving
+test('annotate status of modified-committed', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  store.dispatch(jarm.update(testTask1.type, testTask1.id, {
+    attributes: {
+      name: 'A changed name',
+    },
+  }))
+  store.dispatch(jarm.commit(testTask1.type, testTask1.id))
+  expect(jarm.annotate_status(store, testTask1)[jarm.statusKey]).toBe('modified-committed')
+})
+
+test('annotate status of a modified-pending', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  const changes = {
+    attributes: {
+      name: 'A changed name',
+    },
+  }
+  store.dispatch(jarm.update(testTask1.type, testTask1.id, changes))
+  const expectedUpdated = {
+    ...testTask1,
+    attributes: {
+      ...testTask1.attributes,
+      ...changes.attributes,
+    },
+  }
+  const delay = 200
+  mockOnceDelay({
+    data: expectedUpdated,
+  }, {status: 200}, delay)
+  store.dispatch(jarm.save(testTask1.type, testTask1.id))
+  expect(jarm.annotate_status(store, testTask1)[jarm.statusKey]).toBe('modified-pending')
+})
+
+test('annotate status of deleted', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  store.dispatch(jarm.delete(testTask1.type, testTask1.id))
+  expect(jarm.annotate_status(store, testTask1)[jarm.statusKey]).toBe('deleted')
+})
+
+test('annotate status of deleted-committed', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  store.dispatch(jarm.delete(testTask1.type, testTask1.id))
+  store.dispatch(jarm.commit(testTask1.type, testTask1.id))
+  expect(jarm.annotate_status(store, testTask1)[jarm.statusKey]).toBe('deleted-committed')
+})
+
+test('annotate status of a deleted-pending', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  store.dispatch(jarm.delete(testTask1.type, testTask1.id))
+  const delay = 200
+  mockOnceDelay({
+    data: {},
+  }, {status: 204}, delay)
+  store.dispatch(jarm.save(testTask1.type, testTask1.id))
+  expect(jarm.annotate_status(store, testTask1)[jarm.statusKey]).toBe('deleted-pending')
+})
