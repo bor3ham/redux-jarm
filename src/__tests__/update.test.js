@@ -66,6 +66,8 @@ test('update single new relationship on existing instance', () => {
   expect(newState.local[testTask1.type]).not.toBe(oldState.local[testTask1.type])
 })
 
+// todo: update an instance that does not exist
+
 test('update same attribute twice', () => {
   const store = getStore()
   // create the existing instance
@@ -173,4 +175,3 @@ test('update a committed instance (pending)', () => {
 })
 
 // todo: update an instance marked for deletion
-// todo: update an instance that does not exist

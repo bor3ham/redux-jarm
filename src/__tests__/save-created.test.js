@@ -11,8 +11,6 @@ const testTask1 = {
   },
 }
 
-// todo: save a non-committed created instance
-
 test('save a committed created instance (same id result)', done => {
   const store = getStore()
   const createdId = store.dispatch(jarm.create(testTask1))
@@ -45,6 +43,31 @@ test('save a committed created instance (same id result)', done => {
   expect(pendingState.pending[key]).toBeTruthy()
 })
 
+test('save a non-committed created instance', done => {
+  const store = getStore()
+  const createdId = store.dispatch(jarm.create(testTask1))
+
+  const key = instanceKey(testTask1.type, createdId)
+
+  fetch.mockResponseOnce(
+    {
+      data: {
+        ...testTask1,
+        id: createdId,
+      },
+    },
+    {status: 201},
+  )
+  store.dispatch(jarm.save(testTask1.type, createdId)).then((created) =>  {
+    const completeState = store.getState()
+    expect(completeState.pending[key]).toBeFalsy()
+    expect(completeState.new[key]).toBeFalsy()
+    expect(completeState.local[testTask1.type][createdId]).toBe(undefined)
+    expect(completeState.remote[testTask1.type][createdId]).toMatchObject(created)
+    done()
+  })
+})
+
 test('save a commited created instance (different id result)', () => {
   const store = getStore()
   // todo: finish
@@ -52,8 +75,8 @@ test('save a commited created instance (different id result)', () => {
 
 // todo: save a created instance with no schema url
 // todo: save a non existent instance
-
 // todo: save created resulting in bad request
+
 test('save created resulting in server error', done => {
   const store = getStore()
   const createdId = store.dispatch(jarm.create(testTask1))

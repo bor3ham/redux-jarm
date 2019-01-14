@@ -6,10 +6,13 @@ test('placeholder', () => {
 })
 
 // todo: discard uncommitted new instance
+// todo: discard committed new instance
+// todo: discard pending new instance
 // todo: discard uncommitted changed instance
-// todo: discard committed new instance (not pending)
-// todo: discard committed changed instance (not pending)
-// todo: discard committed new instance (pending)
-// todo: discard committed changed instance (pending)
+// todo: discard committed changed instance
+// todo: discard pending changed instance
+// todo: discard uncommitted instance deletion
+// todo: discard committed instance deletion
+// todo: discard pending instance deletion
 // todo: discard non existent instance
 // todo: discard unchanged instance

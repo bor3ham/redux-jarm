@@ -56,6 +56,7 @@ test('fetch from a list', done => {
     done()
   })
 })
+
 test('fetch from a detail', done => {
   const store = getStore()
   const oldState = store.getState()
@@ -78,6 +79,7 @@ test('fetch from a detail', done => {
     done()
   })
 })
+
 test('fetch from a list with an include', done => {
   const store = getStore()
   const oldState = store.getState()
@@ -103,6 +105,7 @@ test('fetch from a list with an include', done => {
     done()
   })
 })
+
 test('fetch 404', done => {
   const store = getStore()
   fetch.mockResponseOnce(
