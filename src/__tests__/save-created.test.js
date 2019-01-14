@@ -50,12 +50,12 @@ test('save a non-committed created instance', done => {
   const key = instanceKey(testTask1.type, createdId)
 
   fetch.mockResponseOnce(
-    {
+    JSON.stringify({
       data: {
         ...testTask1,
         id: createdId,
       },
-    },
+    }),
     {status: 201},
   )
   store.dispatch(jarm.save(testTask1.type, createdId)).then((created) =>  {
@@ -68,7 +68,7 @@ test('save a non-committed created instance', done => {
   })
 })
 
-test('save a commited created instance (different id result)', () => {
+test('save a committed created instance (different id result)', () => {
   const store = getStore()
   // todo: finish
 })

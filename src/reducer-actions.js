@@ -3,6 +3,7 @@ const ActionKeys = {
   setLocalInstance: 'JARM_SET_LOCAL_INSTANCE',
   extendLocalInstance: 'JARM_EXTEND_LOCAL_INSTANCE',
   deleteLocalInstance: 'JARM_DELETE_LOCAL_INSTANCE',
+  discardLocalInstance: 'JARM_DISCARD_LOCAL_INSTANCE',
   commitLocalInstance: 'JARM_COMMIT_LOCAL_INSTANCE',
   recordSaving: 'JARM_RECORD_SAVING',
   recordUpdateSuccess: 'JARM_RECORD_UPDATE_SUCCESS',
@@ -35,6 +36,13 @@ function extendLocalInstance(type, id, changes) {
 function deleteLocalInstance(type, id) {
   return {
     type: ActionKeys.deleteLocalInstance,
+    instanceType: type,
+    id,
+  }
+}
+function discardLocalInstance(type, id) {
+  return {
+    type: ActionKeys.discardLocalInstance,
     instanceType: type,
     id,
   }
@@ -78,6 +86,7 @@ export {
   setLocalInstance,
   extendLocalInstance,
   deleteLocalInstance,
+  discardLocalInstance,
   commitLocalInstance,
   recordSaving,
   recordUpdateSuccess,

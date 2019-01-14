@@ -65,7 +65,7 @@ export default function reducer(state={
       }
       const key = instanceKey(action.instance.type, action.instance.id)
       if (key in newState.committed) {
-        newState.commited = {
+        newState.committed = {
           ...newState.committed
         }
         delete newState.committed[key]
@@ -97,8 +97,8 @@ export default function reducer(state={
       }
       const key = instanceKey(action.instanceType, action.id)
       if (key in newState.committed) {
-        newState.commited = {
-          ...newState.committed
+        newState.committed = {
+          ...newState.committed,
         }
         delete newState.committed[key]
       }
@@ -117,8 +117,30 @@ export default function reducer(state={
       }
       const key = instanceKey(action.instanceType, action.id)
       if (key in newState.committed) {
-        newState.commited = {
-          ...newState.committed
+        newState.committed = {
+          ...newState.committed,
+        }
+        delete newState.committed[key]
+      }
+      return newState
+    }
+    case Actions.Keys.discardLocalInstance: {
+      let newState = {
+        ...state,
+        local: {
+          ...state.local,
+          [action.instanceType]: {
+            ...state.local[action.instanceType],
+          },
+        },
+      }
+      if (action.id in newState.local[action.instanceType]) {
+        delete newState.local[action.instanceType][action.id]
+      }
+      const key = instanceKey(action.instanceType, action.id)
+      if (key in newState.committed) {
+        newState.committed = {
+          ...newState.committed,
         }
         delete newState.committed[key]
       }
