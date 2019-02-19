@@ -22,26 +22,26 @@ export default function reducer(state={
           ...newState.remote[item.type],
           [item.id]: item,
         }
-        if (newState.local[item.type]) {
-          if (item.id in newState.local[item.type]) {
-            newState.local[item.type] = {
-              ...newState.local[item.type],
-            }
-            delete newState.local[item.type][item.id]
-          }
-        }
         const key = instanceKey(item.type, item.id)
         if (key in newState.new) {
           newState.new = {
             ...newState.new,
           }
           delete newState.new[key]
-        }
-        if (key in newState.committed) {
-          newState.committed = {
-            ...newState.committed,
+          if (newState.local[item.type]) {
+            if (item.id in newState.local[item.type]) {
+              newState.local[item.type] = {
+                ...newState.local[item.type],
+              }
+              delete newState.local[item.type][item.id]
+            }
           }
-          delete newState.committed[key]
+          if (key in newState.committed) {
+            newState.committed = {
+              ...newState.committed,
+            }
+            delete newState.committed[key]
+          }
         }
       })
       return newState
@@ -193,6 +193,12 @@ export default function reducer(state={
           }
           delete newState.local[action.createdInstance.type][action.initialId]
         }
+      }
+      if (key in newState.errors) {
+        newState.errors = {
+          ...newState.errors,
+        }
+        delete newState.errors[key]
       }
       if (action.createdInstance.id != action.intialId) {
         // todo: update all ids if it has changed

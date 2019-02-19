@@ -29,7 +29,7 @@ test('populate from individual', () => {
       },
     },
   })
-  // expect outermost remote reference to be changed
+  // assert no state mutation
   expect(oldState.remote).not.toBe(newState.remote)
 })
 
@@ -49,10 +49,9 @@ test('populate twice from individuals', () => {
       },
     },
   })
-  // expect outermost remote reference to be changed
+  // assert no state mutation
   expect(oldState.remote).not.toBe(middleState.remote)
   expect(middleState.remote).not.toBe(newState.remote)
-  // expect type reference to have changed on the second call
   expect(middleState.remote[testTask1.type]).not.toBe(newState.remote[testTask1.type])
 })
 
@@ -90,6 +89,9 @@ test('populate from set', () => {
       },
     },
   })
-  // expect outermost remote reference to be changed
+  // assert no state mutation
   expect(oldState.remote).not.toBe(newState.remote)
 })
+
+// todo: populate item that collides with existing new id
+// todo: populate item that has local changes

@@ -160,8 +160,64 @@ test('discard pending changed instance', () => {
   }).toThrow()
 })
 
-// todo: discard uncommitted instance deletion
-// todo: discard committed instance deletion
-// todo: discard pending instance deletion
-// todo: discard non existent instance
-// todo: discard unchanged instance
+test('discard uncommitted instance deletion', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  store.dispatch(jarm.delete(testTask1.type, testTask1.id))
+  const key = instanceKey(testTask1.type, testTask1.id)
+
+  const priorState = store.getState()
+  store.dispatch(jarm.discard(testTask1.type, testTask1.id))
+  const endState = store.getState()
+
+  expect(endState.local[testTask1.type][testTask1.id]).toBe(undefined)
+  expect(endState.committed[key]).toBeFalsy()
+  expect(endState.remote[testTask1.type][testTask1.id]).toMatchObject(testTask1)
+  // assert no state mutation
+  expect(endState.local).not.toBe(priorState.local)
+  expect(endState.local[testTask1.type]).not.toBe(priorState.local[testTask1.type])
+})
+
+test('discard committed instance deletion', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  store.dispatch(jarm.delete(testTask1.type, testTask1.id))
+  store.dispatch(jarm.commit(testTask1.type, testTask1.id))
+  const key = instanceKey(testTask1.type, testTask1.id)
+
+  const priorState = store.getState()
+  store.dispatch(jarm.discard(testTask1.type, testTask1.id))
+  const endState = store.getState()
+
+  expect(endState.local[testTask1.type][testTask1.id]).toBe(undefined)
+  expect(endState.committed[key]).toBeFalsy()
+  expect(endState.remote[testTask1.type][testTask1.id]).toMatchObject(testTask1)
+  // assert no state mutation
+  expect(endState.local).not.toBe(priorState.local)
+  expect(endState.local[testTask1.type]).not.toBe(priorState.local[testTask1.type])
+  expect(endState.committed).not.toBe(priorState.committed)
+})
+
+test('discard pending instance deletion', () => {
+  const store = getStore()
+  store.dispatch(jarm.populate(testTask1))
+  store.dispatch(jarm.delete(testTask1.type, testTask1.id))
+  const key = instanceKey(testTask1.type, testTask1.id)
+
+  const delay = 200
+  mockOnceDelay({}, {status: 204}, delay)
+  store.dispatch(jarm.save(testTask1.type, testTask1.id))
+  expect(() => {
+    store.dispatch(jarm.discard(testTask1.type, testTask1.id))
+  }).toThrow()
+})
+
+test('discard unchanged instance', () => {
+  const store = getStore()
+  const key = instanceKey(testTask1.type, testTask1.id)
+
+  store.dispatch(jarm.discard(testTask1.type, testTask1.id))
+  const endState = store.getState()
+  expect(endState.local[testTask1.type][testTask1.id]).toBe(undefined)
+  expect(endState.committed[key]).toBeFalsy()
+})
