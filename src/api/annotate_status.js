@@ -8,8 +8,8 @@ export default function(store, instance) {
   if (!instance.id) {
     throw('No id in instance')
   }
+  const state = this.getJarmState(store.getState())
   const instanceKey = `${instance.type}-${instance.id}`
-  const state = store.getState()
   const local = state.local[instance.type] || {}
   const remote = state.remote[instance.type] || {}
   const isCommitted = !!state.committed[instanceKey]

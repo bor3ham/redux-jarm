@@ -222,6 +222,22 @@ export default function reducer(state={
       }
       return newState
     }
+    case Actions.Keys.flushLocal: {
+      return {
+        ...state,
+        local: {},
+        new: {},
+        pending: {},
+        committed: {},
+        errors: {},
+      }
+    }
+    case Actions.Keys.flushRemote: {
+      return {
+        ...state,
+        remote: {},
+      }
+    }
     default:
       return state
   }

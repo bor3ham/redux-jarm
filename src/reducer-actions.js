@@ -8,6 +8,8 @@ const ActionKeys = {
   recordSaving: 'JARM_RECORD_SAVING',
   recordUpdateSuccess: 'JARM_RECORD_UPDATE_SUCCESS',
   recordUpdateError: 'JARM_RECORD_UPDATE_ERROR',
+  flushLocal: 'JARM_FLUSH_LOCAL',
+  flushRemote: 'JARM_FLUSH_REMOTE',
 }
 
 function setRemoteData(data) {
@@ -80,6 +82,17 @@ function recordUpdateError(type, id, error) {
   }
 }
 
+function flushLocal() {
+  return {
+    type: ActionKeys.flushLocal,
+  }
+}
+function flushRemote() {
+  return {
+    type: ActionKeys.flushRemote,
+  }
+}
+
 export {
   ActionKeys as Keys,
   setRemoteData,
@@ -91,4 +104,6 @@ export {
   recordSaving,
   recordUpdateSuccess,
   recordUpdateError,
+  flushLocal,
+  flushRemote,
 }

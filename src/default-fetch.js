@@ -27,15 +27,19 @@ export default function defaultFetch(url, config={}, data={}) {
       throw 'No base url defined'
     }
     return new Promise((resolve, reject) => {
-      fetch(url, {
+      const filledConfig = {
         ...config,
         headers: {
           'Accept': 'application/vnd.api+json',
           'Content-Type': 'application/vnd.api+json',
           ...config.headers,
         },
-        body: JSON.stringify(data),
-      }).then(attemptToParseJson).then((response) => {
+      }
+      const method = (filledConfig.method || 'GET').toUpperCase()
+      if (method !== 'GET') {
+        filledConfig.body = JSON.stringify(data)
+      }
+      fetch(url, filledConfig).then(attemptToParseJson).then((response) => {
         const errorResponse = (response.status >= 400 && response.status < 600)
         if (!errorResponse) {
           if ('data' in response) {

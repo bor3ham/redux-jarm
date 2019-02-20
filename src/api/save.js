@@ -10,7 +10,7 @@ export default function(instanceType, id) {
       throw('Cannot save: no url in jarm model schema')
     }
     const url = `${this.baseUrl}${model.url}`
-    return dispatch(AsyncActions.save(
+    return dispatch(AsyncActions.save.bind(this)(
       instanceType,
       id,
       url,

@@ -1,1 +1,3 @@
-export default function(store, instance) {}
+export default function(store, instance) {
+  return instance
+}

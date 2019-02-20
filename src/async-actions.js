@@ -15,20 +15,20 @@ function create(newInstance) {
 
 function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction) {
   return (dispatch, getState) => {
-    const storeState = getState()
+    const state = this.getJarmState(getState())
     if (
-      instanceType in storeState.local === false
-      || id in storeState.local[instanceType] === false
+      instanceType in state.local === false
+      || id in state.local[instanceType] === false
     ) {
       throw 'Local instance not found'
     }
-    const instanceData = storeState.local[instanceType][id]
+    const instanceData = state.local[instanceType][id]
     const key = instanceKey(instanceType, id)
 
-    if (storeState.pending[key]) {
+    if (state.pending[key]) {
       throw 'Instance already pending save'
     }
-    if (!storeState.committed[key]) {
+    if (!state.committed[key]) {
       dispatch(ReducerActions.commitLocalInstance(instanceType, id))
     }
 
@@ -37,9 +37,11 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
       // a deletion
     }
     else {
-      if (key in storeState.new) {
+      if (key in state.new) {
         // a creation
-        return dispatch(fetchAction(url, {method: 'POST',}, instanceData)).then(response => {
+        return dispatch(fetchAction(url, {method: 'POST',}, {
+          data: instanceData,
+        })).then(response => {
           dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
           return response.data.data
         }).catch((error) => {
@@ -58,7 +60,13 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
       }
       else {
         // a patch
-        return dispatch(fetchAction(url, {method: 'PATCH',}, instanceData)).then(response => {
+        return dispatch(fetchAction(`${url}${id}/`, {method: 'PATCH',}, {
+          data: {
+            type: instanceType,
+            id,
+            ...instanceData,
+          },
+        })).then(response => {
           dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
           return response.data.data
         }).catch((error) => {

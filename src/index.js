@@ -16,14 +16,34 @@ function createJarm(config) {
   const merged = {
     fetch: defaultFetch,
     schema: {},
+    getJarmState: function(store) {
+      if (this.storeKey) {
+        return store[this.storeKey]
+      }
+      return store
+    },
     statusKey: '__status',
+    getPersistConfig: function(storage) {
+      return {
+        key: this.storeKey,
+        storage,
+        timeout: 10 * 1000,
+        blacklist: [
+          'pending',
+          'errors',
+        ],
+      }
+    },
     ...config,
     reducer,
   }
   merged.fetch = merged.fetch.bind(merged)
+  merged.getJarmState = merged.getJarmState.bind(merged)
+  merged.getPersistConfig = merged.getPersistConfig.bind(merged)
   for (let method in api) {
     merged[method] = api[method].bind(merged)
   }
   return merged
 }
 export default createJarm
+export { defaultFetch }

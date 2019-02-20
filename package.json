@@ -2,7 +2,7 @@
   "name": "redux-jarm",
   "version": "0.0.1",
   "description": "Offline-first redux ORM designed around JSONAPI servers.",
-  "main": "index.js",
+  "main": "src/index.js",
   "repository": "https://github.com/bor3ham/redux-jarm",
   "author": "Michael Boreham",
   "license": "MIT",

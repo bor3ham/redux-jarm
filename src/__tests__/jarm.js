@@ -6,7 +6,7 @@ function customJarm(settings) {
     ...settings,
     schema: {
       Task: {
-        url: '/tasks',
+        url: '/tasks/',
       },
       ...settings.schema,
     },
