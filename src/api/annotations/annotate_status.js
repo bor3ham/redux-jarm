@@ -8,7 +8,7 @@ export default function(store, instance) {
   if (!instance.id) {
     throw('No id in instance')
   }
-  const state = this.getJarmState(store.getState())
+  const state = this.getJarmState(store)
   const instanceKey = `${instance.type}-${instance.id}`
   const local = state.local[instance.type] || {}
   const remote = state.remote[instance.type] || {}
