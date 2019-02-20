@@ -41,6 +41,9 @@ function createJarm(config) {
   merged.getJarmState = merged.getJarmState.bind(merged)
   merged.getPersistConfig = merged.getPersistConfig.bind(merged)
   for (let method in api) {
+    if (typeof api[method] !== 'function') {
+      continue
+    }
     merged[method] = api[method].bind(merged)
   }
   return merged
