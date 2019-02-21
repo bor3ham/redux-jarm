@@ -39,7 +39,7 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
     else {
       if (key in state.new) {
         // a creation
-        return dispatch(fetchAction(url, {method: 'POST',}, {
+        return dispatch(fetchAction(`${url}?include=${createIncludes}`, {method: 'POST',}, {
           data: instanceData,
         })).then(response => {
           dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
@@ -60,7 +60,7 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
       }
       else {
         // a patch
-        return dispatch(fetchAction(`${url}${id}/`, {method: 'PATCH',}, {
+        return dispatch(fetchAction(`${url}${id}/?include=${updateIncludes}`, {method: 'PATCH',}, {
           data: {
             type: instanceType,
             id,

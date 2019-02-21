@@ -28,5 +28,5 @@ export default function(store, pointer) {
       },
     }
   }
-  return null
+  return pointer
 }
