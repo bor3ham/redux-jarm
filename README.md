@@ -4,7 +4,14 @@ Offline-first redux ORM designed around JSONAPI servers.
 
 ## API specification
 
-Check out the full [API specification here](docs/api.md).
+Check out the full [API Specification](docs/api.md).
+
+Optional resources:
+
+- [Persistence](docs/persist.md)
+- [Configuration](docs/config.md)
+- [Filter Specification](docs/filter.md)
+- [Status Options](docs/status.md)
 
 ## Requirements
 
