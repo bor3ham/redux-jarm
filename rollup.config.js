@@ -3,6 +3,7 @@ import commonjs from 'rollup-plugin-commonjs'
 import external from 'rollup-plugin-peer-deps-external'
 import resolve from 'rollup-plugin-node-resolve'
 import builtins from 'rollup-plugin-node-builtins'
+import json from 'rollup-plugin-json'
 
 import pkg from './package.json'
 
@@ -19,8 +20,11 @@ export default {
     }
   ],
   plugins: [
+    json(),
     external(),
-    builtins(),
+    builtins({
+      crypto: true,
+    }),
     babel({
       exclude: 'node_modules/**'
     }),
