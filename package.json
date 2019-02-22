@@ -7,7 +7,6 @@
   "repository": "https://github.com/bor3ham/redux-jarm",
   "author": "Michael Boreham",
   "license": "MIT",
-  "private": true,
   "files": [
     "dist"
   ],
