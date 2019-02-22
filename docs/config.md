@@ -1,4 +1,6 @@
-# Jarm Config
+# Config
+
+Your Jarm instance is configured upon creation with a configuration object. Valid values are:
 
 - `baseUrl`: Your base api url.
 - `getJarmState`: Optional function override for getting your Jarm substate from the top level of

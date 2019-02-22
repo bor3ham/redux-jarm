@@ -4,10 +4,12 @@
 - `pointer` is an object with an `id` and `type`. Any function that takes a `pointer` also would
   accept an `instance`.
 - `instance` is a fully complete object with `id`, `type`, `attributes`, and `relationships`.
+- `filter` is a filter object as defined by the [filter specification here](docs/filter.md)
 
 ## General
 
 | Method | Arguments | Description |
+| --- | --- | --- |
 | `fetch` | `url`, `config`, `data` | Performs a web request using your custom `fetch` command specified in the [config](docs/config.md), automatically adding any returned data to the local cache. |
 
 ## Annotations
@@ -22,10 +24,10 @@
 
 | Method | Arguments | Description |
 | --- | --- | --- |
-| `find` | `store`, `filter` | Returns the first `pointer` that matches the given [filter](docs/filter.md). |
-| `filter` | `store`, `filter` | Returns a set of `[]pointer` that match the given [filter](docs/filter.md). |
-| `get` | `store`, `filter` | Returns the first `instance` that matches the given [filter](docs/filter.md). |
-| `list` | `store`, `filter` | Returns a set of `[]instance` that match the given [filter](docs/filter.md). |
+| `find` | `store`, `filter` | Returns the first `pointer` that matches the given `filter`. |
+| `filter` | `store`, `filter` | Returns a set of `[]pointer` that match the given `filter`. |
+| `get` | `store`, `filter` | Returns the first `instance` that matches the given `filter`. |
+| `list` | `store`, `filter` | Returns a set of `[]instance` that match the given `filter`. |
 | `populate` | `instance` _or_ `[]instance` | Updates the cache of known instances to include any given data. |
 | `flush_local` | | Deletes all local `drafts`, `modifications`, `deletions`. Use with caution. |
 
