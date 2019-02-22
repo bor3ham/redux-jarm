@@ -8,7 +8,7 @@
 ## Annotations
 
 | Method | Arguments | Description |
-|--------|---------------------------------------------------|
+| --- | --- | --- |
 | `annotate_status` | `store`, `pointer` _or_ `[]pointer` | Annotates the current CRUD status onto
 a given pointer or set of pointers. Returns the pointer/pointers with an additional `status` key as
 defined in your [Jarm Config](docs/config.md). A list of potential statuses can be found
@@ -24,7 +24,7 @@ is hit. |
 ## Cache
 
 | Method | Arguments | Description |
-|--------|---------------------------------------------------|
+| --- | --- | --- |
 | `filter` |||
 | `find` |||
 | `flush_local` |||
@@ -35,7 +35,7 @@ is hit. |
 ## Crud
 
 | Method | Arguments | Description |
-|--------|---------------------------------------------------|
+| --- | --- | --- |
 | `commit` |||
 | `create` |||
 | `delete` |||
@@ -45,7 +45,7 @@ is hit. |
 ## Sync
 
 | Method | Arguments | Description |
-|--------|---------------------------------------------------|
+| --- | --- | --- |
 | `get_error` |||
 | `save` |||
 | `save_all` |||
