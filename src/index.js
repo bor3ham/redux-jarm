@@ -48,5 +48,5 @@ function createJarm(config) {
   }
   return merged
 }
-export default createJarm
-export { defaultFetch }
+
+export { createJarm, defaultFetch }
