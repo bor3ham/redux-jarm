@@ -5,11 +5,16 @@
   accept an `instance`.
 - `instance` is a fully complete object with `id`, `type`, `attributes`, and `relationships`.
 
+## General
+
+| Method | Arguments | Description |
+| `fetch` | `url`, `config`, `data` | Performs a web request using your custom `fetch` command specified in the [config](docs/config.md), automatically adding any returned data to the local cache. |
+
 ## Annotations
 
 | Method | Arguments | Description |
 | --- | --- | --- |
-| `annotate_status` | `store`, `pointer` _or_ `[]pointer` | Annotates the current CRUD status onto a given pointer or set of pointers. Returns the pointer/pointers with an additional `status` key as defined in your [Jarm Config](docs/config.md). A list of potential statuses can be found [here](docs/status.md) |
+| `annotate_status` | `store`, `pointer` _or_ `[]pointer` | Annotates the current [status](docs/status.md) onto a given pointer or set of pointers. Returns the pointer/pointers with an additional `status` key as defined in your [Jarm Config](docs/config.md). |
 | `fill_pointers` | `store`, `pointer` _or_ `[]pointer` | Returns the corresponding instances for a given set of pointer/pointers. These will reflect the local modified changes, if any local changes exist. |
 | `retree` | `store`, `instance` _or_ `instances` | Returns the given instance/instances will fully filled `relationship` sets, including anything that is known about in the cache. This will recurse downwards to include any known `relationships` of those `relationships`, until model type repetition is hit. |
 
@@ -17,27 +22,27 @@
 
 | Method | Arguments | Description |
 | --- | --- | --- |
-| `filter` |||
-| `find` |||
-| `flush_local` |||
-| `get` |||
-| `list` |||
-| `populate` |||
+| `find` | `store`, `filter` | Returns the first `pointer` that matches the given [filter](docs/filter.md). |
+| `filter` | `store`, `filter` | Returns a set of `[]pointer` that match the given [filter](docs/filter.md). |
+| `get` | `store`, `filter` | Returns the first `instance` that matches the given [filter](docs/filter.md). |
+| `list` | `store`, `filter` | Returns a set of `[]instance` that match the given [filter](docs/filter.md). |
+| `populate` | `instance` _or_ `[]instance` | Updates the cache of known instances to include any given data. |
+| `flush_local` | | Deletes all local `drafts`, `modifications`, `deletions`. Use with caution. |
 
 ## Crud
 
 | Method | Arguments | Description |
 | --- | --- | --- |
-| `commit` |||
-| `create` |||
-| `delete` |||
-| `discard` |||
-| `update` |||
+| `commit` | `type`, `id` | Commits any local modifications or deletion to be pushed the next time a save is called. |
+| `create` | `instance` | Creates a new instance (requiring a `type`), applying the given instance values on top of the [schema's newTemplate](docs/config.md). |
+| `delete` | `type`, `id` | Marks a remote instance as flagged for deletion. Note: this change will still need to be committed. |
+| `discard` | `type`, `id` | Discards any local modications or deletion flag for given instance. |
+| `update` | `type`, `id`, `changes` | Saves the given changes locally to any instance. Note: these changes will still need to be committed. |
 
 ## Sync
 
 | Method | Arguments | Description |
 | --- | --- | --- |
-| `get_error` |||
-| `save` |||
-| `save_all` |||
+| `get_error` | `type`, `id` | Gets the most recent sync error associated with a given instance. |
+| `save` | `type`, `id` | Pushes any local changes for a given instance up to the remote. This will automatically `commit` the changes if they are uncommitted. |
+| `save_all` | | Pushes all `committed` modifications / deletions up to the remote server. |

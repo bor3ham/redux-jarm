@@ -6,6 +6,10 @@ Offline-first redux ORM designed around JSONAPI servers.
 
 Check out the full [API specification here](docs/api.md).
 
+## Requirements
+
+Jarm requires you to be using `redux` and `redux-thunk` in your middleware.
+
 ## Installation
 
 Install the package with yarn / npm:
@@ -14,3 +18,35 @@ Install the package with yarn / npm:
 yarn add redux-jarm
 # npm install redux-jarm
 ```
+
+Instantiate a Jarm object with [your config](docs/config.md):
+
+```
+import { createJarm } from 'redux-jarm'
+
+const Jarm = createJarm({
+  baseUrl: 'https://example.com/api'
+  storeKey: 'models',
+  schema: {
+    User: {
+      url: '/users/',
+    },
+  },
+})
+```
+
+Register Jarm in your store's reducer:
+
+```
+import { createStore, combineReducers, applyMiddleware } from 'redux'
+import thunk from 'redux-thunk'
+
+import Jarm from './jarm.js'
+
+const reducer = combineReducers({
+  models: Jarm.reducer,
+})
+const store = createStore(reducer, applyMiddleware(thunk))
+```
+
+Optionally, you can persist your Jarm state [as documented here](docs/persist.md).
