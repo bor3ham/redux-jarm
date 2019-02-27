@@ -1,4 +1,9 @@
 export default function(store, instance) {
+  if (Array.isArray(instance)) {
+    return instance.map((item) => {
+      return this.annotate_status(store, item)
+    })
+  }
   if (instance === null) {
     return instance
   }
