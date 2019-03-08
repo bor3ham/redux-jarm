@@ -1,12 +1,16 @@
 # redux-jarm
 
+[![Build Status](https://travis-ci.com/bor3ham/redux-jarm.svg?branch=master)](https://travis-ci.com/bor3ham/redux-jarm)
+[![npm version](https://badge.fury.io/js/redux-jarm.svg)](http://badge.fury.io/js/redux-jarm)
+![Downloads](http://img.shields.io/npm/dm/redux-jarm.svg?style=flat)
+
 Offline-first redux ORM designed around JSONAPI servers.
 
 ## API specification
 
 Check out the full [API Specification](docs/api.md).
 
-Optional resources:
+Additional resources:
 
 - [Persistence](docs/persist.md)
 - [Configuration](docs/config.md)
