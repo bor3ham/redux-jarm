@@ -1,4 +1,4 @@
-import createJarm from '..'
+import { createJarm } from '..'
 
 function customJarm(settings) {
   return createJarm({
