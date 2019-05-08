@@ -17,11 +17,21 @@ export default function reducer(state={
           ...state.remote,
         },
       }
-      action.data.map((item) => {
+      action.additions.map((item) => {
         newState.remote[item.type] = {
           ...newState.remote[item.type],
           [item.id]: item,
         }
+      })
+      action.removals.map((item) => {
+        newState.remote[item.type] = {
+          ...newState.remote[item.type],
+        }
+        if (item.id in newState.remote[item.type]) {
+          delete newState.remote[item.type][item.id]
+        }
+      })
+      const purgeNew = (item) => {
         const key = instanceKey(item.type, item.id)
         if (key in newState.new) {
           newState.new = {
@@ -43,7 +53,9 @@ export default function reducer(state={
             delete newState.committed[key]
           }
         }
-      })
+      }
+      action.additions.map(purgeNew)
+      action.removals.map(purgeNew)
       return newState
     }
     case Actions.Keys.setLocalInstance: {

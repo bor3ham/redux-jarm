@@ -1,10 +1,19 @@
 import * as ReducerActions from '../../reducer-actions.js'
 
 export default function(data) {
+  let array = data
   if (!Array.isArray(data)) {
-    return ReducerActions.setRemoteData([data])
+    array = [data]
   }
-  else {
-    return ReducerActions.setRemoteData(data)
-  }
+  const additions = []
+  const deletions = []
+  array.map((item) => {
+    if (this.isDeleted(item)) {
+      deletions.push(item)
+    }
+    else {
+      additions.push(item)
+    }
+  })
+  return ReducerActions.setRemoteData(additions, deletions)
 }

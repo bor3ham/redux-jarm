@@ -12,10 +12,11 @@ const ActionKeys = {
   flushRemote: 'JARM_FLUSH_REMOTE',
 }
 
-function setRemoteData(data) {
+function setRemoteData(additions=[], removals=[]) {
   return {
     type: ActionKeys.setRemoteData,
-    data,
+    additions,
+    removals,
   }
 }
 

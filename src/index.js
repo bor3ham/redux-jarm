@@ -1,6 +1,7 @@
 import * as ReducerActions from './reducer-actions.js'
 import * as AsyncActions from './async-actions.js'
 import defaultFetch from './default-fetch.js'
+import defaultIsDeleted from './default-is-deleted.js'
 import reducer from './reducer.js'
 import * as api from './api'
 
@@ -15,6 +16,7 @@ import * as api from './api'
 function createJarm(config) {
   const merged = {
     fetch: defaultFetch,
+    isDeleted: defaultIsDeleted,
     schema: {},
     getJarmState: function(store) {
       if (this.storeKey) {
@@ -38,6 +40,7 @@ function createJarm(config) {
     reducer,
   }
   merged.fetch = merged.fetch.bind(merged)
+  merged.isDeleted = merged.isDeleted.bind(merged)
   merged.getJarmState = merged.getJarmState.bind(merged)
   merged.getPersistConfig = merged.getPersistConfig.bind(merged)
   for (let method in api) {
