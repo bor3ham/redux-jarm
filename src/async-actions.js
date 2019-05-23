@@ -1,6 +1,8 @@
 import uuidv4 from 'uuid/v4'
 import * as ReducerActions from './reducer-actions'
-import { instanceKey } from './utils.js'
+import { instanceKey, pointerFromInstance } from './utils.js'
+
+const ALREADY_PENDING_ERROR ='Instance already pending save'
 
 function create(newInstance) {
   return (dispatch, getState) => {
@@ -26,55 +28,128 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
     const key = instanceKey(instanceType, id)
 
     if (state.pending[key]) {
-      throw 'Instance already pending save'
+      throw ALREADY_PENDING_ERROR
     }
     if (!state.committed[key]) {
       dispatch(ReducerActions.commitLocalInstance(instanceType, id))
     }
 
     dispatch(ReducerActions.recordSaving(instanceType, id))
-    if (instanceData === false) {
-      // a deletion
-    }
-    else {
-      if (key in state.new) {
-        // a creation
-        return dispatch(fetchAction(`${url}?include=${createIncludes}`, {method: 'POST',}, {
-          data: instanceData,
-        })).then(response => {
-          dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
-          return response.data.data
-        }).catch((error) => {
-          // if conflict - already posted to server
-          if (error.status === 409 && error.data.data) {
-            dispatch(ReducerActions.setRemoteData([error.data.data]))
-            dispatch(ReducerActions.recordUpdateSuccess(id, error.data.data))
-            return error.data.data
-          }
-          // otherwise genuine error
-          else {
-            dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
-            throw error
-          }
-        })
+
+    const performSave = () => {
+      if (instanceData === false) {
+        // a deletion
       }
       else {
-        // a patch
-        return dispatch(fetchAction(`${url}${id}/?include=${updateIncludes}`, {method: 'PATCH',}, {
-          data: {
-            type: instanceType,
-            id,
-            ...instanceData,
-          },
-        })).then(response => {
-          dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
-          return response.data.data
-        }).catch((error) => {
-          dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
-          throw error
-        })
+        if (key in state.new) {
+          // a creation
+          let postUrl = url
+          if (createIncludes) {
+            postUrl = `${postUrl}?include=${createIncludes}`
+          }
+          return dispatch(fetchAction(postUrl, {method: 'POST',}, {
+            data: instanceData,
+          })).then(response => {
+            dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
+            return response.data.data
+          }).catch((error) => {
+            // if conflict - already posted to server
+            if (error.status === 409 && error.data.data) {
+              dispatch(ReducerActions.setRemoteData([error.data.data]))
+              dispatch(ReducerActions.recordUpdateSuccess(id, error.data.data))
+              return error.data.data
+            }
+            // otherwise genuine error
+            else {
+              dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
+              throw error
+            }
+          })
+        }
+        else {
+          // a patch
+          let patchUrl = `${url}${id}/`
+          if (updateIncludes) {
+            patchUrl = `${patchUrl}?include=${updateIncludes}`
+          }
+          return dispatch(fetchAction(patchUrl, {method: 'PATCH',}, {
+            data: {
+              type: instanceType,
+              id,
+              ...instanceData,
+            },
+          })).then(response => {
+            dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
+            return response.data.data
+          }).catch((error) => {
+            dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
+            throw error
+          })
+        }
       }
     }
+
+    // get all relationship values that are local instances
+    const localRelations = {}
+    for (var relationKey in instanceData.relationships || {}) {
+      const relation = instanceData.relationships[relationKey].data
+      if (Array.isArray(relation)) {
+        relation.map((item) => {
+          const key = instanceKey(item.type, item.id)
+          if (key in state.new) {
+            localRelations[key] = true
+          }
+        })
+      }
+      else if (relation) {
+        const key = instanceKey(relation.type, relation.id)
+        if (key in state.new) {
+          localRelations[key] = true
+        }
+      }
+    }
+    // if there are any local instances
+    if (Object.keys(localRelations).length > 0) {
+      // throw an exception if any are uncommitted
+      for (var relationKey in localRelations) {
+        if (!state.committed[relationKey]) {
+          throw 'Instance depends on uncommitted local instance'
+        }
+      }
+      // save any relations before saving this instance itself
+      const relationWaits = []
+      for (var relationKey in localRelations) {
+        const ptr = pointerFromInstance(relationKey)
+        relationWaits.push(new Promise((resolve, reject) => {
+          dispatch(this.save(ptr.type, ptr.id)).then(resolve)
+        }).catch(error => {
+          // if the relation is already pending a save, poll until it's complete
+          if (error === ALREADY_PENDING_ERROR) {
+            return new Promise((resolve, reject) => {
+              let check = () => {
+                const checkState = this.getJarmState(getState())
+                if (checkState.pending[relationKey]) {
+                  setTimeout(check, 500)
+                }
+                else {
+                  resolve()
+                }
+              }
+              setTimeout(check, 500)
+            })
+          }
+          throw error
+        }))
+      }
+      return Promise.all(relationWaits).then(() => {
+        performSave()
+      }).catch((error) => {
+        dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
+        throw error
+      })
+    }
+
+    performSave()
   }
 }
 
