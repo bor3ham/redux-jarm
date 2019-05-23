@@ -212,8 +212,56 @@ export default function reducer(state={
         }
         delete newState.errors[key]
       }
+      // if the item was assigned a new ID on creation,
+      // go through the entire cache and update local references to new ID
       if (action.createdInstance.id != action.intialId) {
-        // todo: update all ids if it has changed
+        newState.local = {
+          ...newState.local,
+        }
+        for (let instanceType in newState.local) {
+          newState.local[instanceType] = {
+            ...newState.local[instanceType],
+          }
+          for (let instanceId in newState.local[instanceType]) {
+            let instance = newState.local[instanceType][instanceId]
+            let needsUpdating = false
+            let updatedInstance = {
+              ...instance,
+              relationships: {
+                ...instance.relationships,
+              },
+            }
+            for (var relationKey in instance.relationships) {
+              const relation = instance.relationships[relationKey].data
+              if (Array.isArray(relation)) {
+                updatedInstance.relationships[relationKey].data = relation.map((item) => {
+                  if (item.id === action.intialId) {
+                    needsUpdating = true
+                    return {
+                      ...item,
+                      id: action.createdInstance.id,
+                    }
+                  }
+                  else {
+                    return item
+                  }
+                })
+              }
+              else {
+                if (relation.id === action.initialId) {
+                  needsUpdating = true
+                  updatedInstance.relationships[relationKey].data = {
+                    ...relation,
+                    id: action.createdInstance.id,
+                  }
+                }
+              }
+            }
+            if (needsUpdating) {
+              newState.local[instanceType][instanceId] = updatedInstance
+            }
+          }
+        }
       }
       return newState
     }
