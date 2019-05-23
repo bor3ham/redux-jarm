@@ -29,7 +29,8 @@
   },
   "scripts": {
     "test": "jest",
-    "build": "./node_modules/.bin/webpack",
+    "build": "./node_modules/.bin/webpack --config webpack.build.js",
+    "watch": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
     "prepare": "npm run build"
   },
   "jest": {
