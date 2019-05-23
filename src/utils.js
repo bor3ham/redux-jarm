@@ -3,7 +3,7 @@ function instanceKey(type, id) {
 }
 
 function pointerFromInstance(pointer) {
-  const firstHyphen = pointer.substring(pointer.indexOf)
+  const firstHyphen = pointer.indexOf('-')
   return {
     type: pointer.substring(0, firstHyphen),
     id: pointer.substring(firstHyphen + 1),
