@@ -104,6 +104,15 @@ export default function(store, filter, breakFirst=false) {
   const state = this.getJarmState(store)
   const matches = []
 
+  const filterStarted = +(new Date())
+  function logEnd() {
+    const ended = +(new Date())
+    const duration = ended - filterStarted
+    if (duration > 10) {
+      console.warn('filter took', duration, filter)
+    }
+  }
+
   const types = Object.keys({
     ...state.remote,
     ...state.local,
@@ -117,10 +126,24 @@ export default function(store, filter, breakFirst=false) {
     const remoteModel = state.remote[instanceType] || {}
     const localModel = state.local[instanceType] || {}
 
-    const ids = Object.keys({
-      ...remoteModel,
-      ...localModel,
-    })
+    const ids = []
+    // do modified and pending filters early
+    if (
+      ('pending' in filter && filter.pending)
+      || ('modified' in filter && filter.modified)
+      || ('new' in filter && filter.new)
+    ) {
+      ids = Object.keys({...localModel})
+    }
+    else {
+      ids = Object.keys({
+        ...remoteModel,
+        ...localModel,
+      })
+    }
+
+    // todo: filter exact ids first
+
     for (let idIndex = 0; idIndex < ids.length; idIndex++) {
       const id = ids[idIndex]
       if ('id' in filter && id !== filter.id) {
@@ -192,12 +215,14 @@ export default function(store, filter, breakFirst=false) {
           id,
         }
         if (breakFirst) {
+          logEnd()
           return match
         }
         matches.push(match)
       }
     }
   }
+  logEnd()
   if (breakFirst) {
     return null
   }
