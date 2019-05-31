@@ -17,15 +17,22 @@ export default function reducer(state={
           ...state.remote,
         },
       }
+      const clonedTypes = {}
       action.additions.map((item) => {
-        newState.remote[item.type] = {
-          ...newState.remote[item.type],
-          [item.id]: item,
+        if (item.type in clonedTypes === false) {
+          newState.remote[item.type] = {
+            ...newState.remote[item.type],
+          }
+          clonedTypes[item.type] = true
         }
+        newState.remote[item.type][item.id] = item
       })
       action.removals.map((item) => {
-        newState.remote[item.type] = {
-          ...newState.remote[item.type],
+        if (item.type in clonedTypes === false) {
+          newState.remote[item.type] = {
+            ...newState.remote[item.type],
+          }
+          clonedTypes[item.type] = true
         }
         if (item.id in newState.remote[item.type]) {
           delete newState.remote[item.type][item.id]
