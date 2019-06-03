@@ -109,7 +109,7 @@ export default function(store, filter, breakFirst=false) {
     const ended = +(new Date())
     const duration = ended - filterStarted
     if (duration > 10) {
-      console.warn('filter took', duration, filter)
+      // console.warn('filter took', duration, filter)
     }
   }
 
@@ -127,28 +127,29 @@ export default function(store, filter, breakFirst=false) {
     const localModel = state.local[instanceType] || {}
 
     const ids = []
-    // do modified and pending filters early
-    if (
-      ('pending' in filter && filter.pending)
-      || ('modified' in filter && filter.modified)
-      || ('new' in filter && filter.new)
-    ) {
-      ids = Object.keys({...localModel})
+    if ('id' in filter) {
+      // if filtering by id, don't waste time even searching other ids
+      ids = [filter.id]
     }
     else {
-      ids = Object.keys({
-        ...remoteModel,
-        ...localModel,
-      })
+      // if filtering by local, use a more efficient set by excluding remote cache
+      if (
+        ('pending' in filter && filter.pending)
+        || ('modified' in filter && filter.modified)
+        || ('new' in filter && filter.new)
+      ) {
+        ids = Object.keys({...localModel})
+      }
+      else {
+        ids = Object.keys({
+          ...remoteModel,
+          ...localModel,
+        })
+      }
     }
-
-    // todo: filter exact ids first
 
     for (let idIndex = 0; idIndex < ids.length; idIndex++) {
       const id = ids[idIndex]
-      if ('id' in filter && id !== filter.id) {
-        continue
-      }
 
       const key = instanceKey(instanceType, id)
       if ('modified' in filter) {
