@@ -72,6 +72,9 @@ function relationsMatch(rOne, rTwo) {
 }
 
 function matchesInstance(instance, filter) {
+  if (typeof instance !== 'object' || typeof filter !== 'object') {
+    return false
+  }
   if ('type' in filter && instance.type !== filter.type) {
     return false
   }
