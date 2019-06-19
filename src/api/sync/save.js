@@ -17,6 +17,7 @@ export default function(instanceType, id) {
       model.createIncludes,
       model.updateIncludes,
       this.fetch,
+      this.onNewId,
     ))
   }
 }

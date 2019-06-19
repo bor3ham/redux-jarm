@@ -16,6 +16,11 @@ import * as api from './api'
 function createJarm(config) {
   const merged = {
     fetch: defaultFetch,
+    onNewId: function(oldId, newId) {
+      return (dispatch, getState) => {
+        console.warn(oldId, newId, 'Updated in Jarm Cache, but no handler given')
+      }
+    },
     isDeleted: defaultIsDeleted,
     schema: {},
     getJarmState: function(store) {
@@ -39,6 +44,7 @@ function createJarm(config) {
     ...config,
     reducer,
   }
+  merged.onNewId = merged.onNewId.bind(merged)
   merged.fetch = merged.fetch.bind(merged)
   merged.isDeleted = merged.isDeleted.bind(merged)
   merged.getJarmState = merged.getJarmState.bind(merged)

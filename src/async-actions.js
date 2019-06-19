@@ -15,7 +15,7 @@ function create(newInstance) {
   }
 }
 
-function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction) {
+function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction, newIdAction) {
   return (dispatch, getState) => {
     const state = this.getJarmState(getState())
     if (
@@ -51,6 +51,9 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
             data: instanceData,
           })).then(response => {
             dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
+            if (response.data.data.id != id) {
+              dispatch(newIdAction(id, response.data.data.id))
+            }
             return response.data.data
           }).catch((error) => {
             // if conflict - already posted to server
