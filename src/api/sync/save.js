@@ -9,6 +9,10 @@ export default function(instanceType, id) {
     if (!model.url) {
       throw('Cannot save: no url in jarm model schema')
     }
+    let baseUrl = this.baseUrl
+    if (typeof baseUrl === 'function') {
+      baseUrl = baseUrl(getState())
+    }
     const url = `${this.baseUrl}${model.url}`
     return dispatch(AsyncActions.save.bind(this)(
       instanceType,
