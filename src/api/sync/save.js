@@ -13,7 +13,7 @@ export default function(instanceType, id) {
     if (typeof baseUrl === 'function') {
       baseUrl = baseUrl(getState())
     }
-    const url = `${this.baseUrl}${model.url}`
+    const url = `${baseUrl}${model.url}`
     return dispatch(AsyncActions.save.bind(this)(
       instanceType,
       id,
