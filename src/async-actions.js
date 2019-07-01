@@ -145,14 +145,14 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
         }))
       }
       return Promise.all(relationWaits).then(() => {
-        performSave()
+        return performSave()
       }).catch((error) => {
         dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
         throw error
       })
     }
 
-    performSave()
+    return performSave()
   }
 }
 
