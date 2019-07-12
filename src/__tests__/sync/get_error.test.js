@@ -1,8 +1,8 @@
-import getStore from '../store.js'
-import jarm from '../jarm.js'
+// import getStore from '../store.js'
+// import jarm from '../jarm.js'
 
 test('placeholder', () => {
-  const store = getStore()
+  // const store = getStore()
 })
 
 // todo: get error when none exists

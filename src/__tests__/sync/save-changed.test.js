@@ -107,13 +107,6 @@ test('save changed resulting in bad request', done => {
     },
   }
   store.dispatch(jarm.update(testTask1.type, testTask1.id, changes))
-  const expectedUpdated = {
-    ...testTask1,
-    attributes: {
-      ...testTask1.attributes,
-      ...changes.attributes,
-    },
-  }
   const key = instanceKey(testTask1.type, testTask1.id)
   const initialState = store.getState()
 
@@ -146,13 +139,6 @@ test('save changed resulting in server error', done => {
     },
   }
   store.dispatch(jarm.update(testTask1.type, testTask1.id, changes))
-  const expectedUpdated = {
-    ...testTask1,
-    attributes: {
-      ...testTask1.attributes,
-      ...changes.attributes,
-    },
-  }
   const key = instanceKey(testTask1.type, testTask1.id)
   const initialState = store.getState()
 
@@ -244,7 +230,6 @@ test('save an already pending change', () => {
       ...changes.attributes,
     },
   }
-  const key = instanceKey(testTask1.type, testTask1.id)
   const delay = 200
   mockOnceDelay({
     data: expectedUpdated,
@@ -269,7 +254,6 @@ test('save a changed instance with no schema url', () => {
     },
   }
   store.dispatch(jarm.update(testTask1.type, testTask1.id, changes))
-  const key = instanceKey(testTask1.type, testTask1.id)
 
   expect(() => {
     store.dispatch(jarm.save(testTask1.type, testTask1.id))

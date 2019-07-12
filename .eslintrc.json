@@ -5,6 +5,9 @@
   },
   "extends": ["eslint:recommended"],
   "globals": {
+    "test": "readonly",
+    "expect": "readonly",
+    "fail": "readonly"
   },
   "parser": "babel-eslint",
   "parserOptions": {

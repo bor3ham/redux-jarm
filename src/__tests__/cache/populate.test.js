@@ -57,9 +57,7 @@ test('populate twice from individuals', () => {
 
 test('populate twice from duplicate individual', () => {
   const store = getStore()
-  const oldState = store.getState()
   store.dispatch(jarm.populate(testTask1))
-  const middleState = store.getState()
   store.dispatch(jarm.populate(testTask1))
   const newState = store.getState()
 

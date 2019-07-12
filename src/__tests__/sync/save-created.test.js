@@ -69,7 +69,7 @@ test('save a non-committed created instance', done => {
 })
 
 test('save a committed created instance (different id result)', () => {
-  const store = getStore()
+  // const store = getStore()
   // todo: finish
 })
 
@@ -169,49 +169,52 @@ test('save created resulting in perceived transport error, then retry but alread
   })
 })
 
-test('save created resulting in perceived transport error, then discover instance through fetch', done => {
-  const store = getStore()
-  const createdId = store.dispatch(jarm.create(testTask1))
-  const created = {
-    ...testTask1,
-    id: createdId,
-  }
-  store.dispatch(jarm.commit(testTask1.type, createdId))
-
-  const key = instanceKey(testTask1.type, createdId)
-  fetch.mockRejectOnce(new Error('Some transport error'))
-  store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
-    fail('Should not have been able to create instance')
-  }).catch((error) => {
-    let erroredState = store.getState()
-    expect(error).toBeTruthy()
-    expect(erroredState.errors[key]).toBeTruthy()
-    expect(erroredState.pending[key]).toBeFalsy()
-
-    const listResponse = {
-      data: [
-        {
-          ...testTask1,
-          id: createdId,
-        },
-      ],
+test(
+  'save created resulting in perceived transport error, then discover instance through fetch',
+  done => {
+    const store = getStore()
+    const createdId = store.dispatch(jarm.create(testTask1))
+    const created = {
+      ...testTask1,
+      id: createdId,
     }
-    fetch.mockResponseOnce(
-      JSON.stringify(listResponse),
-      {status: 200},
-    )
-    store.dispatch(jarm.fetch('/tasks', {})).then((response) => {
-      // make sure the mock worked
-      expect(response.data).toMatchObject(listResponse)
-      // expect item to be in the remote and cleared from local
-      const finalState = store.getState()
-      expect(finalState.remote[testTask1.type][createdId]).toMatchObject(created)
-      expect(createdId in finalState.local[testTask1.type]).toBe(false)
-      expect(finalState.new[key]).toBeFalsy()
-      done()
+    store.dispatch(jarm.commit(testTask1.type, createdId))
+
+    const key = instanceKey(testTask1.type, createdId)
+    fetch.mockRejectOnce(new Error('Some transport error'))
+    store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
+      fail('Should not have been able to create instance')
+    }).catch((error) => {
+      let erroredState = store.getState()
+      expect(error).toBeTruthy()
+      expect(erroredState.errors[key]).toBeTruthy()
+      expect(erroredState.pending[key]).toBeFalsy()
+
+      const listResponse = {
+        data: [
+          {
+            ...testTask1,
+            id: createdId,
+          },
+        ],
+      }
+      fetch.mockResponseOnce(
+        JSON.stringify(listResponse),
+        {status: 200},
+      )
+      store.dispatch(jarm.fetch('/tasks', {})).then((response) => {
+        // make sure the mock worked
+        expect(response.data).toMatchObject(listResponse)
+        // expect item to be in the remote and cleared from local
+        const finalState = store.getState()
+        expect(finalState.remote[testTask1.type][createdId]).toMatchObject(created)
+        expect(createdId in finalState.local[testTask1.type]).toBe(false)
+        expect(finalState.new[key]).toBeFalsy()
+        done()
+      })
     })
-  })
-})
+  }
+)
 
 test('save an already pending creation', () => {
   const store = getStore()

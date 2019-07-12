@@ -69,7 +69,6 @@ test('discard pending new instance', () => {
     },
   }
   const newId = store.dispatch(jarm.create(createData))
-  const key = instanceKey(createData.type, newId)
 
   const delay = 200
   mockOnceDelay({
@@ -141,7 +140,6 @@ test('discard pending changed instance', () => {
     },
   }
   store.dispatch(jarm.update(testTask1.type, testTask1.id, changes))
-  const key = instanceKey(testTask1.type, testTask1.id)
 
   const delay = 200
   const expectedUpdated = {
@@ -202,7 +200,6 @@ test('discard pending instance deletion', () => {
   const store = getStore()
   store.dispatch(jarm.populate(testTask1))
   store.dispatch(jarm.delete(testTask1.type, testTask1.id))
-  const key = instanceKey(testTask1.type, testTask1.id)
 
   const delay = 200
   mockOnceDelay({}, {status: 204}, delay)

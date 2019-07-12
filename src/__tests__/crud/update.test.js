@@ -74,7 +74,6 @@ test('update same attribute twice', () => {
   store.dispatch(jarm.populate(testTask1))
 
   // update it
-  const initialState = store.getState()
   const firstChanges = {
     attributes: {
       name: 'Something else',
@@ -128,7 +127,9 @@ test('update a committed instance (not pending)', () => {
   // make sure there has been no object mutation
   expect(newState.local).not.toBe(oldState.local)
   expect(newState.local[testTask1.type]).not.toBe(oldState.local[testTask1.type])
-  expect(newState.local[testTask1.type][testTask1.id]).not.toBe(oldState.local[testTask1.type][testTask1.id])
+  expect(newState.local[testTask1.type][testTask1.id]).not.toBe(
+    oldState.local[testTask1.type][testTask1.id]
+  )
 })
 
 test('update a committed instance (pending)', () => {
@@ -162,7 +163,6 @@ test('update a committed instance (pending)', () => {
     delay
   )
   store.dispatch(jarm.save(testTask1.type, testTask1.id))
-  const pendingState = store.getState()
 
   const laterChanges = {
     attributes: {
