@@ -93,3 +93,8 @@ test('populate from set', () => {
 
 // todo: populate item that collides with existing new id
 // todo: populate item that has local changes
+
+// todo: populate learn of deleted item with no changes
+// todo: populate learn of deleted item with local changes
+// todo: populate learn of deleted item with pending changes
+// todo: populate learn of deleted item already marked for deletion

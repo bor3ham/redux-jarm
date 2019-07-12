@@ -239,3 +239,5 @@ test('save an already pending creation', () => {
 })
 
 // todo: save a creation with ?include
+// todo: save a creation with direct reference to local draft object
+// todo: save a creation with set reference to local draft object

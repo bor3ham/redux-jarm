@@ -4,3 +4,6 @@
 test('placeholder', () => {
   // const store = getStore()
 })
+
+// todo: find first of set
+// todo: find no result

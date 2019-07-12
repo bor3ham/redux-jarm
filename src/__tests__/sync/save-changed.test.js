@@ -262,3 +262,5 @@ test('save a changed instance with no schema url', () => {
 
 // todo: save a changed with ?include foreign key
 // todo: save a changed with ?include m2m / rfk
+// todo: save a changed with direct reference to local draft object
+// todo: save a changed with set reference to local draft object
