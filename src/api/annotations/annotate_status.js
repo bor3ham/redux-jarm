@@ -1,6 +1,7 @@
 import { instanceKey, argsMatch } from '../../utils.js'
 
 function getInstanceStatus(localInstance, isNew, isCommitted, isPending) {
+  // console.log('getting instance status', localInstance, isNew, isCommitted, isPending)
   if (localInstance === false) {
     if (isPending) {
       return 'deleted-pending'
@@ -62,7 +63,7 @@ ANNOTATED_STATUS_CACHE.get = function(
       args: arguments,
       result: {
         ...queryInstance,
-        [statusKey]: getInstanceStatus(localInstance, isNew, isPending, isCommitted),
+        [statusKey]: getInstanceStatus(localInstance, isNew, isCommitted, isPending),
       },
     }
   }
@@ -90,5 +91,12 @@ export default function(store, instance) {
   const isNew = !!state.new[instanceKey]
   const isCommitted = !!state.committed[instanceKey]
   const isPending = !!state.pending[instanceKey]
-  return ANNOTATED_STATUS_CACHE.get(instance, this.statusKey, local, isNew, isCommitted, isPending)
+  return ANNOTATED_STATUS_CACHE.get(
+    instance,
+    this.statusKey,
+    local[instance.id],
+    isNew,
+    isCommitted,
+    isPending,
+  )
 }

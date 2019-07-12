@@ -161,3 +161,6 @@ test('annotate status of a deleted-pending', () => {
   const state = store.getState()
   expect(jarm.annotate_status(state, testTask1)[jarm.statusKey]).toBe('deleted-pending')
 })
+
+// todo: test annotating status cache hit
+// todo: test annotating status cache miss
