@@ -1,10 +1,13 @@
+function logParseTime(start, end) {
+  // console.warn('JSON parse took:', end - start)
+}
 function attemptToParseJson(response) {
   return new Promise((resolve, reject) => {
     if (response && typeof response.json === 'function') {
-      const startedParse = +(new Date())
+      const start = +(new Date())
       response.json().then((parsed) => {
-        const endedParse = +(new Date())
-        // console.warn('JSON parse took:', endedParse - startedParse)
+        const end = +(new Date())
+        logParseTime(start ,end)
         resolve({
           ...response,
           data: parsed,
@@ -24,6 +27,12 @@ function attemptToParseJson(response) {
   })
 }
 
+function logPopulateDataTime(start, end) {
+  // console.warn('populating data took:', end - start)
+}
+function logPopulateIncludedTime(start, end) {
+  // console.warn('populating included took:', end - start)
+}
 export default function defaultFetch(url, config={}, data={}) {
   return (dispatch, getState) => {
     if (!this.baseUrl) {
@@ -47,16 +56,16 @@ export default function defaultFetch(url, config={}, data={}) {
         if (!errorResponse) {
           if ('data' in response) {
             if ('data' in response.data) {
-              const populateStarted = +(new Date())
+              const start = +(new Date())
               dispatch(this.populate(response.data.data))
-              const populateDone = +(new Date())
-              // console.warn('populating data took:', populateDone - populateStarted)
+              const end = +(new Date())
+              logPopulateDataTime(start, end)
             }
             if ('included' in response.data) {
-              const populateStarted = +(new Date())
+              const start = +(new Date())
               dispatch(this.populate(response.data.included))
-              const populateDone = +(new Date())
-              // console.warn('populating included took:', populateDone - populateStarted)
+              const end = +(new Date())
+              logPopulateIncludedTime(start, end)
             }
           }
         }

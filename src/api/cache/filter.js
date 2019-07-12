@@ -79,7 +79,7 @@ function matchesInstance(instance, filter) {
     return false
   }
   if ('attributes' in filter) {
-    for (var key in filter.attributes) {
+    for (let key in filter.attributes) {
       if ('attributes' in instance === false) {
         return false
       }
@@ -89,7 +89,7 @@ function matchesInstance(instance, filter) {
     }
   }
   if ('relationships' in filter) {
-    for (var key in filter.relationships) {
+    for (let key in filter.relationships) {
       if ('relationships' in instance === false) {
         return false
       }
@@ -129,7 +129,7 @@ export default function(store, filter, breakFirst=false) {
     const remoteModel = state.remote[instanceType] || {}
     const localModel = state.local[instanceType] || {}
 
-    const ids = []
+    let ids = []
     if ('id' in filter) {
       // if filtering by id, don't waste time even searching other ids
       ids = [filter.id]

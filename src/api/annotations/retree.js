@@ -15,8 +15,6 @@ export default function(store, instance, alreadyHit={}) {
     return instance
   }
 
-  const state = this.getJarmState(store)
-
   const newAlreadyHit = {
     ...alreadyHit,
   }

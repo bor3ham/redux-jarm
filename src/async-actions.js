@@ -4,7 +4,7 @@ import { instanceKey, pointerFromInstance } from './utils.js'
 
 const ALREADY_PENDING_ERROR ='Instance already pending save'
 
-function create(newInstance) {
+export function create(newInstance) {
   return (dispatch, getState) => {
     const newId = uuidv4()
     dispatch(ReducerActions.setLocalInstance({
@@ -15,7 +15,15 @@ function create(newInstance) {
   }
 }
 
-function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction, newIdAction) {
+export function save(
+  instanceType,
+  id,
+  url,
+  createIncludes,
+  updateIncludes,
+  fetchAction,
+  newIdAction,
+) {
   return (dispatch, getState) => {
     const state = this.getJarmState(getState())
     if (
@@ -64,7 +72,9 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
             }
             // otherwise genuine error
             else {
-              dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
+              dispatch(ReducerActions.recordUpdateError(
+                instanceType, id, error.data ? error.data : error
+              ))
               throw error
             }
           })
@@ -85,7 +95,9 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
             dispatch(ReducerActions.recordUpdateSuccess(id, response.data.data))
             return response.data.data
           }).catch((error) => {
-            dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
+            dispatch(ReducerActions.recordUpdateError(
+              instanceType, id, error.data ? error.data : error
+            ))
             throw error
           })
         }
@@ -94,7 +106,7 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
 
     // get all relationship values that are local instances
     const localRelations = {}
-    for (var relationKey in instanceData.relationships || {}) {
+    for (let relationKey in instanceData.relationships || {}) {
       const relation = instanceData.relationships[relationKey].data
       if (Array.isArray(relation)) {
         relation.map((item) => {
@@ -121,7 +133,7 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
       }
       // save any relations before saving this instance itself
       const relationWaits = []
-      for (var relationKey in localRelations) {
+      for (let relationKey in localRelations) {
         const ptr = pointerFromInstance(relationKey)
         relationWaits.push(new Promise((resolve, reject) => {
           dispatch(this.save(ptr.type, ptr.id)).then(resolve)
@@ -147,16 +159,13 @@ function save(instanceType, id, url, createIncludes, updateIncludes, fetchAction
       return Promise.all(relationWaits).then(() => {
         return performSave()
       }).catch((error) => {
-        dispatch(ReducerActions.recordUpdateError(instanceType, id, error.data ? error.data : error))
+        dispatch(ReducerActions.recordUpdateError(
+          instanceType, id, error.data ? error.data : error
+        ))
         throw error
       })
     }
 
     return performSave()
   }
-}
-
-export {
-  create,
-  save,
 }

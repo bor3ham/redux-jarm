@@ -11,8 +11,11 @@ const ActionKeys = {
   flushLocal: 'JARM_FLUSH_LOCAL',
   flushRemote: 'JARM_FLUSH_REMOTE',
 }
+export {
+  ActionKeys as Keys,
+}
 
-function setRemoteData(additions=[], removals=[]) {
+export function setRemoteData(additions=[], removals=[]) {
   return {
     type: ActionKeys.setRemoteData,
     additions,
@@ -20,7 +23,7 @@ function setRemoteData(additions=[], removals=[]) {
   }
 }
 
-function setLocalInstance(instance, isNew) {
+export function setLocalInstance(instance, isNew) {
   return {
     type: ActionKeys.setLocalInstance,
     instance,
@@ -28,7 +31,7 @@ function setLocalInstance(instance, isNew) {
   }
 }
 
-function extendLocalInstance(type, id, changes) {
+export function extendLocalInstance(type, id, changes) {
   return {
     type: ActionKeys.extendLocalInstance,
     instanceType: type,
@@ -36,14 +39,14 @@ function extendLocalInstance(type, id, changes) {
     changes,
   }
 }
-function deleteLocalInstance(type, id) {
+export function deleteLocalInstance(type, id) {
   return {
     type: ActionKeys.deleteLocalInstance,
     instanceType: type,
     id,
   }
 }
-function discardLocalInstance(type, id) {
+export function discardLocalInstance(type, id) {
   return {
     type: ActionKeys.discardLocalInstance,
     instanceType: type,
@@ -51,7 +54,7 @@ function discardLocalInstance(type, id) {
   }
 }
 
-function commitLocalInstance(type, id) {
+export function commitLocalInstance(type, id) {
   return {
     type: ActionKeys.commitLocalInstance,
     instanceType: type,
@@ -59,7 +62,7 @@ function commitLocalInstance(type, id) {
   }
 }
 
-function recordSaving(type, id) {
+export function recordSaving(type, id) {
   return {
     type: ActionKeys.recordSaving,
     instanceType: type,
@@ -67,14 +70,14 @@ function recordSaving(type, id) {
   }
 }
 
-function recordUpdateSuccess(initialId, createdInstance) {
+export function recordUpdateSuccess(initialId, createdInstance) {
   return {
     type: ActionKeys.recordUpdateSuccess,
     initialId,
     createdInstance,
   }
 }
-function recordUpdateError(type, id, error) {
+export function recordUpdateError(type, id, error) {
   return {
     type: ActionKeys.recordUpdateError,
     instanceType: type,
@@ -83,28 +86,13 @@ function recordUpdateError(type, id, error) {
   }
 }
 
-function flushLocal() {
+export function flushLocal() {
   return {
     type: ActionKeys.flushLocal,
   }
 }
-function flushRemote() {
+export function flushRemote() {
   return {
     type: ActionKeys.flushRemote,
   }
-}
-
-export {
-  ActionKeys as Keys,
-  setRemoteData,
-  setLocalInstance,
-  extendLocalInstance,
-  deleteLocalInstance,
-  discardLocalInstance,
-  commitLocalInstance,
-  recordSaving,
-  recordUpdateSuccess,
-  recordUpdateError,
-  flushLocal,
-  flushRemote,
 }
