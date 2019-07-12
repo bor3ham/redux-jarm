@@ -39,7 +39,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint src",
     "test": "jest",
-    "coveralls": "jest --coverage && cat ./tests/coverage/lcov.info | coveralls",
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | coveralls",
     "build": "./node_modules/.bin/webpack --config webpack.build.js",
     "watch": "./node_modules/.bin/webpack --config webpack.dev.js --watch",
     "prepare": "npm run build"
