@@ -1,7 +1,7 @@
 # redux-jarm
 
 [![Build Status](https://travis-ci.com/bor3ham/redux-jarm.svg?branch=master)](https://travis-ci.com/bor3ham/redux-jarm)
-[![Coverage Status](https://coveralls.io/repos/github/bor3ham/redux-jarm/badge.svg?branch=master)]
+[![Coverage Status](https://coveralls.io/repos/github/bor3ham/redux-jarm/badge.svg?branch=master)](https://coveralls.io/github/bor3ham/redux-jarm?branch=master)
 [![npm version](https://badge.fury.io/js/redux-jarm.svg)](http://badge.fury.io/js/redux-jarm)
 ![Downloads](http://img.shields.io/npm/dm/redux-jarm.svg?style=flat)
 
