@@ -1,6 +1,6 @@
 {
   "name": "redux-jarm",
-  "version": "0.0.13",
+  "version": "0.0.15",
   "description": "Offline-first redux ORM designed around JSONAPI servers.",
   "main": "dist/redux-jarm.js",
   "repository": "https://github.com/bor3ham/redux-jarm",
