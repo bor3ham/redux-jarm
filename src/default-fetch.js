@@ -33,7 +33,7 @@ function logPopulateDataTime(start, end) {
 function logPopulateIncludedTime(start, end) {
   // console.warn('populating included took:', end - start)
 }
-export default function defaultFetch(url, config={}, data={}) {
+export default function defaultFetch(url, config={}, data={}, populate=true) {
   return (dispatch, getState) => {
     if (!this.baseUrl) {
       throw 'No base url defined'
@@ -54,18 +54,20 @@ export default function defaultFetch(url, config={}, data={}) {
       fetch(url, filledConfig).then(attemptToParseJson).then((response) => {
         const errorResponse = (response.status >= 400 && response.status < 600)
         if (!errorResponse) {
-          if ('data' in response) {
-            if ('data' in response.data) {
-              const start = +(new Date())
-              dispatch(this.populate(response.data.data))
-              const end = +(new Date())
-              logPopulateDataTime(start, end)
-            }
-            if ('included' in response.data) {
-              const start = +(new Date())
-              dispatch(this.populate(response.data.included))
-              const end = +(new Date())
-              logPopulateIncludedTime(start, end)
+          if (populate) {
+            if ('data' in response) {
+              if ('data' in response.data) {
+                const start = +(new Date())
+                dispatch(this.populate(response.data.data))
+                const end = +(new Date())
+                logPopulateDataTime(start, end)
+              }
+              if ('included' in response.data) {
+                const start = +(new Date())
+                dispatch(this.populate(response.data.included))
+                const end = +(new Date())
+                logPopulateIncludedTime(start, end)
+              }
             }
           }
         }
