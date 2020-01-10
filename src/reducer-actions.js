@@ -86,13 +86,15 @@ export function recordUpdateError(type, id, error) {
   }
 }
 
-export function flushLocal() {
+export function flushLocal(type) {
   return {
     type: ActionKeys.flushLocal,
+    instanceType: type,
   }
 }
-export function flushRemote() {
+export function flushRemote(type) {
   return {
     type: ActionKeys.flushRemote,
+    instanceType: type,
   }
 }

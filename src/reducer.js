@@ -290,19 +290,57 @@ export default function reducer(state={
       return newState
     }
     case Actions.Keys.flushLocal: {
-      return {
-        ...state,
-        local: {},
-        new: {},
-        pending: {},
-        committed: {},
-        errors: {},
+      if (action.instanceType === null) {
+        return {
+          ...state,
+          local: {},
+          new: {},
+          pending: {},
+          committed: {},
+          errors: {},
+        }
+      }
+      else {
+        const filterOutByType = (keyMap) => {
+          const newKeyMap = {
+            ...keyMap,
+          }
+          Object.keys(newKeyMap).map(key => {
+            const type = key.split('-')[0]
+            if (type === action.instanceType) {
+              delete newKeyMap[key]
+            }
+          })
+          return newKeyMap
+        }
+        return {
+          ...state,
+          local: {
+            ...state.local,
+            [action.instanceType]: {},
+          },
+          new: filterOutByType(state.new),
+          pending: filterOutByType(state.pending),
+          committed: filterOutByType(state.committed),
+          errors: filterOutByType(state.errors),
+        }
       }
     }
     case Actions.Keys.flushRemote: {
-      return {
-        ...state,
-        remote: {},
+      if (action.instanceType === null) {
+        return {
+          ...state,
+          remote: {},
+        }
+      }
+      else {
+        return {
+          ...state,
+          remote: {
+            ...state.remote,
+            [action.instanceType]: {},
+          },
+        }
       }
     }
     default:

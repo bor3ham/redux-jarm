@@ -1,5 +1,5 @@
 import * as ReducerActions from '../../reducer-actions.js'
 
-export default function() {
-  return ReducerActions.flushRemote()
+export default function(type=null) {
+  return ReducerActions.flushRemote(type)
 }
