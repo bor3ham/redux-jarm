@@ -202,6 +202,12 @@ export default function reducer(state={
         }
         delete newState.new[key]
       }
+      if (key in newState.committed) {
+        newState.committed = {
+          ...newState.committed,
+        }
+        delete newState.committed[key]
+      }
       if (action.createdInstance.type in newState.local) {
         if (action.initialId in newState.local[action.createdInstance.type]) {
           newState.local = {
