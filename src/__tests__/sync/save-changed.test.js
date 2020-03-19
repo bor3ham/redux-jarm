@@ -210,7 +210,7 @@ test('save changed resulting in transport error, then retry successfully', done 
       expect(finalState.remote[testTask1.type][testTask1.id]).toMatchObject(expectedUpdated)
       expect(testTask1.id in finalState.local[testTask1.type]).toBe(false)
       expect(finalState.pending[key]).toBeFalsy()
-      expect(finalState.committed[key]).toBeFalsey()
+      expect(finalState.committed[key]).toBeFalsy()
       expect(finalState.errors[key]).toBe(undefined)
       // assert no state mutation
       expect(finalState.remote).not.toBe(midState.remote)
@@ -310,6 +310,7 @@ test('save a changed with an uncommitted direct reference to local draft object'
     store.dispatch(jarm.save(testTask1.type, testTask1.id))
   }).toThrow()
 })
+
 test('save a changed with a committed direct reference to local draft object', done => {
   const testUser1 = {
     type: 'User',
@@ -409,9 +410,147 @@ test('save a changed with a committed direct reference to local draft object', d
     done()
   })
 })
-test('save a changed with set reference to local draft object', () => {
+
+test('save a changed with uncommitted set reference to local draft object', () => {
+  const testUser1 = {
+    type: 'User',
+    attributes: {
+      name: 'Roberta',
+    },
+  }
+  // create a jarm schema to test across two instance types
+  const jarm = customJarm({
+    schema: {
+      User: {
+        url: '/users/',
+      },
+    },
+  })
+  const store = getStore()
   // add task 1 to known cache
-  // create local task 2
-  // change m2m on task 1 to local task 2
-  // call a save and ensure task 2 is saved first
+  store.dispatch(jarm.populate(testTask1))
+  // create local user 1
+  const createdId = store.dispatch(jarm.create(testUser1))
+  // change fk on task 1 to local user 1
+  store.dispatch(jarm.update(testTask1.type, testTask1.id, {
+    relationships: {
+      assignees: {
+        data: [
+          {
+            type: 'User',
+            id: createdId,
+          },
+        ],
+      },
+    },
+  }))
+  store.dispatch(jarm.commit(testTask1.type, testTask1.id))
+  // call a save on task 1 and expect an error
+  expect(() => {
+    store.dispatch(jarm.save(testTask1.type, testTask1.id))
+  }).toThrow()
+})
+
+test('save a changed with a committed set reference to local draft object', done => {
+  const testUser1 = {
+    type: 'User',
+    attributes: {
+      name: 'Roberta',
+    },
+  }
+  const createdUserId = 'bbb-001'
+  let haveCreatedUser = false
+  fetch.mockResponse(request => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        if (request.url.indexOf('/api/tasks/') !== -1) {
+          // throw an exception if we try to create the task first
+          if (!haveCreatedUser) {
+            reject({
+              status: 400,
+              body: JSON.stringify({error: 'User does not exist'}),
+            })
+          }
+          const data = JSON.parse(String.fromCharCode(...request.body))
+          if (data.data.relationships.assignees.data[0].id !== createdUserId) {
+            reject({
+              status: 400,
+              body: JSON.stringify({error: 'User id not found'})
+            })
+          }
+          resolve({
+            status: 201,
+            body: JSON.stringify({
+              data: {
+                ...testTask1,
+                relationships: {
+                  ...testTask1.relationships,
+                  assignees: {
+                    data: [
+                      {
+                        type: 'User',
+                        id: createdUserId,
+                      },
+                    ],
+                  },
+                },
+              },
+            }),
+          })
+        }
+        if (request.url.indexOf('/api/users/') !== -1) {
+          haveCreatedUser = true
+          resolve({
+            status: 201,
+            body: JSON.stringify({
+              data: {
+                ...testUser1,
+                id: createdUserId,
+              },
+            }),
+          })
+        }
+        reject()
+      }, 200)
+    })
+  })
+  // create a jarm schema to test across two instance types
+  const jarm = customJarm({
+    schema: {
+      User: {
+        url: '/users/',
+      },
+    },
+    onNewId: function(oldId, newId) {
+      return (dispatch, getState) => {}
+    },
+  })
+  const store = getStore()
+  // add task 1 to known cache
+  store.dispatch(jarm.populate(testTask1))
+  // create local user 1
+  const createdId = store.dispatch(jarm.create(testUser1))
+  // change fk on task 1 to local user 1
+  store.dispatch(jarm.update(testTask1.type, testTask1.id, {
+    relationships: {
+      assignees: {
+        data: [
+          {
+            type: 'User',
+            id: createdId,
+          },
+        ],
+      },
+    },
+  }))
+  store.dispatch(jarm.commit(testTask1.type, testTask1.id))
+  // commit the draft user, allowing it to be auto saved upon a call to user save
+  store.dispatch(jarm.commit('User', createdId))
+  // call a save on task 1
+  store.dispatch(jarm.save(testTask1.type, testTask1.id)).then(() => {
+    expect(Object.keys(store.getState().pending).length).toBe(0)
+    expect(Object.keys(store.getState().committed).length).toBe(0)
+    expect(Object.keys(store.getState().errors).length).toBe(0)
+    done()
+  })
 })
