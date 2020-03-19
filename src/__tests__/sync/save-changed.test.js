@@ -10,6 +10,13 @@ const testTask1 = {
     name: 'Mow the lawn',
   },
 }
+const testUser1 = {
+  type: 'User',
+  id: 'bbb-001',
+  attributes: {
+    name: 'Roberta',
+  },
+}
 
 test('save a committed changed instance', done => {
   const store = getStore()
@@ -274,12 +281,6 @@ test('save a changed instance with no schema url', () => {
 // todo: save a changed with ?include m2m / rfk
 
 test('save a changed with an uncommitted direct reference to local draft object', () => {
-  const testUser1 = {
-    type: 'User',
-    attributes: {
-      name: 'Roberta',
-    },
-  }
   // create a jarm schema to test across two instance types
   const jarm = customJarm({
     schema: {
@@ -292,7 +293,7 @@ test('save a changed with an uncommitted direct reference to local draft object'
   // add task 1 to known cache
   store.dispatch(jarm.populate(testTask1))
   // create local user 1
-  const createdId = store.dispatch(jarm.create(testUser1))
+  const createdId = store.dispatch(jarm.create({...testUser1, id: undefined}))
   // change fk on task 1 to local user 1
   store.dispatch(jarm.update(testTask1.type, testTask1.id, {
     relationships: {
@@ -312,13 +313,6 @@ test('save a changed with an uncommitted direct reference to local draft object'
 })
 
 test('save a changed with a committed direct reference to local draft object', done => {
-  const testUser1 = {
-    type: 'User',
-    attributes: {
-      name: 'Roberta',
-    },
-  }
-  const createdUserId = 'bbb-001'
   let haveCreatedUser = false
   fetch.mockResponse(request => {
     return new Promise((resolve, reject) => {
@@ -332,7 +326,7 @@ test('save a changed with a committed direct reference to local draft object', d
             })
           }
           const data = JSON.parse(String.fromCharCode(...request.body))
-          if (data.data.relationships.assignee.data.id !== createdUserId) {
+          if (data.data.relationships.assignee.data.id !== testUser1.id) {
             reject({
               status: 400,
               body: JSON.stringify({error: 'User id not found'})
@@ -347,8 +341,8 @@ test('save a changed with a committed direct reference to local draft object', d
                   ...testTask1.relationships,
                   assignee: {
                     data: {
-                      type: 'User',
-                      id: createdUserId,
+                      type: testUser1.type,
+                      id: testUser1.id,
                     },
                   },
                 },
@@ -361,10 +355,7 @@ test('save a changed with a committed direct reference to local draft object', d
           resolve({
             status: 201,
             body: JSON.stringify({
-              data: {
-                ...testUser1,
-                id: createdUserId,
-              },
+              data: testUser1,
             }),
           })
         }
@@ -387,7 +378,7 @@ test('save a changed with a committed direct reference to local draft object', d
   // add task 1 to known cache
   store.dispatch(jarm.populate(testTask1))
   // create local user 1
-  const createdId = store.dispatch(jarm.create(testUser1))
+  const createdId = store.dispatch(jarm.create({...testUser1, id: undefined}))
   // change fk on task 1 to local user 1
   store.dispatch(jarm.update(testTask1.type, testTask1.id, {
     relationships: {
@@ -430,7 +421,7 @@ test('save a changed with uncommitted set reference to local draft object', () =
   // add task 1 to known cache
   store.dispatch(jarm.populate(testTask1))
   // create local user 1
-  const createdId = store.dispatch(jarm.create(testUser1))
+  const createdId = store.dispatch(jarm.create({...testUser1, id: undefined}))
   // change fk on task 1 to local user 1
   store.dispatch(jarm.update(testTask1.type, testTask1.id, {
     relationships: {
@@ -452,13 +443,6 @@ test('save a changed with uncommitted set reference to local draft object', () =
 })
 
 test('save a changed with a committed set reference to local draft object', done => {
-  const testUser1 = {
-    type: 'User',
-    attributes: {
-      name: 'Roberta',
-    },
-  }
-  const createdUserId = 'bbb-001'
   let haveCreatedUser = false
   fetch.mockResponse(request => {
     return new Promise((resolve, reject) => {
@@ -472,7 +456,7 @@ test('save a changed with a committed set reference to local draft object', done
             })
           }
           const data = JSON.parse(String.fromCharCode(...request.body))
-          if (data.data.relationships.assignees.data[0].id !== createdUserId) {
+          if (data.data.relationships.assignees.data[0].id !== testUser1.id) {
             reject({
               status: 400,
               body: JSON.stringify({error: 'User id not found'})
@@ -488,8 +472,8 @@ test('save a changed with a committed set reference to local draft object', done
                   assignees: {
                     data: [
                       {
-                        type: 'User',
-                        id: createdUserId,
+                        type: testUser1.type,
+                        id: testUser1.id,
                       },
                     ],
                   },
@@ -503,10 +487,7 @@ test('save a changed with a committed set reference to local draft object', done
           resolve({
             status: 201,
             body: JSON.stringify({
-              data: {
-                ...testUser1,
-                id: createdUserId,
-              },
+              data: testUser1,
             }),
           })
         }
@@ -529,7 +510,7 @@ test('save a changed with a committed set reference to local draft object', done
   // add task 1 to known cache
   store.dispatch(jarm.populate(testTask1))
   // create local user 1
-  const createdId = store.dispatch(jarm.create(testUser1))
+  const createdId = store.dispatch(jarm.create({...testUser1, id: undefined}))
   // change fk on task 1 to local user 1
   store.dispatch(jarm.update(testTask1.type, testTask1.id, {
     relationships: {

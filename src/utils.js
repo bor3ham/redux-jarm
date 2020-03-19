@@ -53,3 +53,25 @@ MERGE_CACHE.get = function(type, id, local, remote) {
 export function mergeChanges(type, id, local, remote) {
   return MERGE_CACHE.get(type, id, local, remote)
 }
+
+export function getLocalRelations(instance, state) {
+  const localRelations = {}
+  for (let relationKey in instance.relationships || {}) {
+    const relation = instance.relationships[relationKey].data
+    if (Array.isArray(relation)) {
+      relation.map((item) => {
+        const key = instanceKey(item.type, item.id)
+        if (key in state.new) {
+          localRelations[key] = true
+        }
+      })
+    }
+    else if (relation) {
+      const key = instanceKey(relation.type, relation.id)
+      if (key in state.new) {
+        localRelations[key] = true
+      }
+    }
+  }
+  return localRelations
+}

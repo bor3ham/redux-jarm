@@ -1,8 +1,10 @@
 import uuidv4 from 'uuid/v4'
 import * as ReducerActions from './reducer-actions'
-import { instanceKey, pointerFromInstance } from './utils.js'
+import { instanceKey, pointerFromInstance, getLocalRelations } from './utils.js'
 
-const ALREADY_PENDING_ERROR = 'Instance already pending save'
+export const ALREADY_PENDING_ERROR = 'Instance already pending save'
+export const LOCAL_INSTANCE_NOT_FOUND_ERROR = 'Local instance not found'
+export const UNCOMMITTED_DEPENDENCY_ERROR = 'Instance depends on uncommitted local instance'
 
 export function create(newInstance) {
   return (dispatch, getState) => {
@@ -30,7 +32,7 @@ export function save(
       instanceType in state.local === false
       || id in state.local[instanceType] === false
     ) {
-      throw 'Local instance not found'
+      throw LOCAL_INSTANCE_NOT_FOUND_ERROR
     }
     const instanceData = state.local[instanceType][id]
     const key = instanceKey(instanceType, id)
@@ -105,24 +107,7 @@ export function save(
     }
 
     // get all relationship values that are local instances
-    const localRelations = {}
-    for (let relationKey in instanceData.relationships || {}) {
-      const relation = instanceData.relationships[relationKey].data
-      if (Array.isArray(relation)) {
-        relation.map((item) => {
-          const key = instanceKey(item.type, item.id)
-          if (key in state.new) {
-            localRelations[key] = true
-          }
-        })
-      }
-      else if (relation) {
-        const key = instanceKey(relation.type, relation.id)
-        if (key in state.new) {
-          localRelations[key] = true
-        }
-      }
-    }
+    const localRelations = getLocalRelations(instanceData, state)
     // if there are any local instances
     if (Object.keys(localRelations).length > 0) {
       // throw an exception if any are uncommitted
@@ -131,7 +116,7 @@ export function save(
           dispatch(ReducerActions.recordUpdateError(
             instanceType, id, 'Instance depends on uncommitted local instance'
           ))
-          throw 'Instance depends on uncommitted local instance'
+          throw UNCOMMITTED_DEPENDENCY_ERROR
         }
       }
       // save any relations before saving this instance itself
