@@ -2,7 +2,7 @@ import uuidv4 from 'uuid/v4'
 import * as ReducerActions from './reducer-actions'
 import { instanceKey, pointerFromInstance } from './utils.js'
 
-const ALREADY_PENDING_ERROR ='Instance already pending save'
+const ALREADY_PENDING_ERROR = 'Instance already pending save'
 
 export function create(newInstance) {
   return (dispatch, getState) => {
@@ -128,6 +128,9 @@ export function save(
       // throw an exception if any are uncommitted
       for (var relationKey in localRelations) {
         if (!state.committed[relationKey]) {
+          dispatch(ReducerActions.recordUpdateError(
+            instanceType, id, 'Instance depends on uncommitted local instance'
+          ))
           throw 'Instance depends on uncommitted local instance'
         }
       }
