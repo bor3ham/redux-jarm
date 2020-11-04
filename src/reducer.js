@@ -246,6 +246,9 @@ export default function reducer(state={
             }
             for (var relationKey in instance.relationships) {
               const relation = instance.relationships[relationKey].data
+              if (!relation) {
+                continue
+              }
               if (Array.isArray(relation)) {
                 updatedInstance.relationships[relationKey].data = relation.map((item) => {
                   if (item.id === action.initialId) {
