@@ -59,6 +59,12 @@ export default function reducer(state={
             }
             delete newState.committed[key]
           }
+          if (key in newState.errors) {
+            newState.errors = {
+              ...newState.errors,
+            }
+            delete newState.errors[key]
+          }
         }
       }
       action.additions.map(purgeNew)
