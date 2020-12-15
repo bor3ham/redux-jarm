@@ -15,16 +15,17 @@ const testTask1 = {
 
 test('save a committed created instance (same id result)', done => {
   const store = getStore()
-  const createdId = store.dispatch(jarm.create(testTask1))
-  store.dispatch(jarm.commit(testTask1.type, createdId))
+  const creatingId = store.dispatch(jarm.create(testTask1))
+  const creating = {
+    ...testTask1,
+    id: creatingId,
+  }
+  store.dispatch(jarm.commit(testTask1.type, creatingId))
 
   const priorState = store.getState()
-  expectInstanceMatches(priorState, testTask1.type, createdId, {
+  expectInstanceMatches(priorState, testTask1.type, creatingId, {
     remote: undefined,
-    local: {
-      ...testTask1,
-      id: createdId,
-    },
+    local: creating,
     new: true,
     committed: true,
     pending: false,
@@ -34,17 +35,14 @@ test('save a committed created instance (same id result)', done => {
   const delay = 200
   mockOnceDelay(
     {
-      data: {
-        ...testTask1,
-        id: createdId,
-      },
+      data: creating,
     },
     {status: 201},
     delay
   )
-  store.dispatch(jarm.save(testTask1.type, createdId)).then((created) =>  {
+  store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) =>  {
     const completeState = store.getState()
-    expectInstanceMatches(completeState, testTask1.type, createdId, {
+    expectInstanceMatches(completeState, testTask1.type, creatingId, {
       remote: created,
       local: undefined,
       new: false,
@@ -55,12 +53,9 @@ test('save a committed created instance (same id result)', done => {
     done()
   })
   const pendingState = store.getState()
-  expectInstanceMatches(pendingState, testTask1.type, createdId, {
+  expectInstanceMatches(pendingState, testTask1.type, creatingId, {
     remote: undefined,
-    local: {
-      ...testTask1,
-      id: createdId,
-    },
+    local: creating,
     new: true,
     committed: true,
     pending: true,
@@ -71,15 +66,16 @@ test('save a committed created instance (same id result)', done => {
 test('save a committed created instance (different id result)', done => {
   const store = getStore()
   const localId = store.dispatch(jarm.create(testTask1))
+  const local = {
+    ...testTask1,
+    id: localId,
+  }
   store.dispatch(jarm.commit(testTask1.type, localId))
 
   const priorState = store.getState()
   expectInstanceMatches(priorState, testTask1.type, localId, {
     remote: undefined,
-    local: {
-      ...testTask1,
-      id: localId,
-    },
+    local: local,
     new: true,
     committed: true,
     pending: false,
@@ -87,14 +83,15 @@ test('save a committed created instance (different id result)', done => {
   })
 
   const remoteId = uuidv4()
+  const remote = {
+    ...testTask1,
+    id: remoteId,
+  }
 
   const delay = 200
   mockOnceDelay(
     {
-      data: {
-        ...testTask1,
-        id: remoteId,
-      },
+      data: remote,
     },
     {status: 201},
     delay
@@ -115,10 +112,7 @@ test('save a committed created instance (different id result)', done => {
   const pendingState = store.getState()
   expectInstanceMatches(pendingState, testTask1.type, localId, {
     remote: undefined,
-    local: {
-      ...testTask1,
-      id: localId,
-    },
+    local: local,
     new: true,
     committed: true,
     pending: true,
@@ -128,22 +122,23 @@ test('save a committed created instance (different id result)', done => {
 
 test('save a non-committed created instance', done => {
   const store = getStore()
-  const createdId = store.dispatch(jarm.create(testTask1))
+  const creatingId = store.dispatch(jarm.create(testTask1))
+  const creating = {
+    ...testTask1,
+    id: creatingId,
+  }
 
   const delay = 200
   mockOnceDelay(
     {
-      data: {
-        ...testTask1,
-        id: createdId,
-      },
+      data: creating,
     },
     {status: 201},
     delay
   )
-  store.dispatch(jarm.save(testTask1.type, createdId)).then((created) =>  {
+  store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) =>  {
     const completeState = store.getState()
-    expectInstanceMatches(completeState, testTask1.type, createdId, {
+    expectInstanceMatches(completeState, testTask1.type, creatingId, {
       remote: created,
       local: undefined,
       new: false,
@@ -154,12 +149,9 @@ test('save a non-committed created instance', done => {
     done()
   })
   const pendingState = store.getState()
-  expectInstanceMatches(pendingState, testTask1.type, createdId, {
+  expectInstanceMatches(pendingState, testTask1.type, creatingId, {
     remote: undefined,
-    local: {
-      ...testTask1,
-      id: createdId,
-    },
+    local: creating,
     new: true,
     committed: true,
     pending: true,
@@ -173,8 +165,12 @@ test('save a non-committed created instance', done => {
 
 test('save created resulting in server error', done => {
   const store = getStore()
-  const createdId = store.dispatch(jarm.create(testTask1))
-  store.dispatch(jarm.commit(testTask1.type, createdId))
+  const creatingId = store.dispatch(jarm.create(testTask1))
+  const creating = {
+    ...testTask1,
+    id: creatingId,
+  }
+  store.dispatch(jarm.commit(testTask1.type, creatingId))
 
   const errorResponse = {
     error: 'Internal server error',
@@ -183,16 +179,13 @@ test('save created resulting in server error', done => {
     JSON.stringify(errorResponse),
     {status: 500},
   )
-  store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
+  store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) => {
     fail('Should not have been able to create instance')
   }).catch((error) => {
     let completeState = store.getState()
-    expectInstanceMatches(completeState, testTask1.type, createdId, {
+    expectInstanceMatches(completeState, testTask1.type, creatingId, {
       remote: undefined,
-      local: {
-        ...testTask1,
-        id: createdId,
-      },
+      local: creating,
       new: true,
       committed: true,
       pending: false,
@@ -204,22 +197,23 @@ test('save created resulting in server error', done => {
 
 test('save created resulting in complete transport error, then retry successfully', done => {
   const store = getStore()
-  const createdId = store.dispatch(jarm.create(testTask1))
-  store.dispatch(jarm.commit(testTask1.type, createdId))
+  const creatingId = store.dispatch(jarm.create(testTask1))
+  const creating = {
+    ...testTask1,
+    id: creatingId,
+  }
+  store.dispatch(jarm.commit(testTask1.type, creatingId))
 
   const transportError = new Error('Some transport error')
   fetch.mockRejectOnce(transportError)
-  store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
+  store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) => {
     fail('Should not have been able to create instance')
   }).catch((error) => {
     let erroredState = store.getState()
     expect(error).toBeTruthy()
-    expectInstanceMatches(erroredState, testTask1.type, createdId, {
+    expectInstanceMatches(erroredState, testTask1.type, creatingId, {
       remote: undefined,
-      local: {
-        ...testTask1,
-        id: createdId,
-      },
+      local: creating,
       new: true,
       committed: true,
       pending: false,
@@ -227,16 +221,13 @@ test('save created resulting in complete transport error, then retry successfull
     })
     fetch.mockResponseOnce(
       JSON.stringify({
-        data: {
-          ...testTask1,
-          id: createdId,
-        },
+        data: creating,
       }),
       {status: 201},
     )
-    store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
+    store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) => {
       const completeState = store.getState()
-      expectInstanceMatches(completeState, testTask1.type, createdId, {
+      expectInstanceMatches(completeState, testTask1.type, creatingId, {
         remote: created,
         local: undefined,
         new: false,
@@ -251,22 +242,23 @@ test('save created resulting in complete transport error, then retry successfull
 
 test('save created resulting in perceived transport error, then retry but already exists', done => {
   const store = getStore()
-  const createdId = store.dispatch(jarm.create(testTask1))
-  store.dispatch(jarm.commit(testTask1.type, createdId))
+  const creatingId = store.dispatch(jarm.create(testTask1))
+  const creating = {
+    ...testTask1,
+    id: creatingId,
+  }
+  store.dispatch(jarm.commit(testTask1.type, creatingId))
 
   const transportError = new Error('Some transport error')
   fetch.mockRejectOnce(transportError)
-  store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
+  store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) => {
     fail('Should not have been able to create instance')
   }).catch((error) => {
     expect(error).toBeTruthy()
     const erroredState = store.getState()
-    expectInstanceMatches(erroredState, testTask1.type, createdId, {
+    expectInstanceMatches(erroredState, testTask1.type, creatingId, {
       remote: undefined,
-      local: {
-        ...testTask1,
-        id: createdId,
-      },
+      local: creating,
       new: true,
       committed: true,
       pending: false,
@@ -274,16 +266,13 @@ test('save created resulting in perceived transport error, then retry but alread
     })
     fetch.mockResponseOnce(
       JSON.stringify({
-        data: {
-          ...testTask1,
-          id: createdId,
-        },
+        data: creating,
       }),
       {status: 409},
     )
-    store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
+    store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) => {
       const completeState = store.getState()
-      expectInstanceMatches(completeState, testTask1.type, createdId, {
+      expectInstanceMatches(completeState, testTask1.type, creatingId, {
         remote: created,
         local: undefined,
         new: false,
@@ -300,23 +289,23 @@ test(
   'save created resulting in perceived transport error, then discover instance through fetch',
   done => {
     const store = getStore()
-    const createdId = store.dispatch(jarm.create(testTask1))
-    const created = {
+    const creatingId = store.dispatch(jarm.create(testTask1))
+    const creating = {
       ...testTask1,
-      id: createdId,
+      id: creatingId,
     }
-    store.dispatch(jarm.commit(testTask1.type, createdId))
+    store.dispatch(jarm.commit(testTask1.type, creatingId))
 
     const transportError = new Error('Some transport error')
     fetch.mockRejectOnce(transportError)
-    store.dispatch(jarm.save(testTask1.type, createdId)).then((created) => {
+    store.dispatch(jarm.save(testTask1.type, creatingId)).then((created) => {
       fail('Should not have been able to create instance')
     }).catch((error) => {
       let erroredState = store.getState()
       expect(error).toBeTruthy()
-      expectInstanceMatches(erroredState, testTask1.type, createdId, {
+      expectInstanceMatches(erroredState, testTask1.type, creatingId, {
         remote: undefined,
-        local: created,
+        local: creating,
         new: true,
         committed: true,
         pending: false,
@@ -327,7 +316,7 @@ test(
         data: [
           {
             ...testTask1,
-            id: createdId,
+            id: creatingId,
           },
         ],
       }
@@ -340,8 +329,8 @@ test(
         expect(response.data).toMatchObject(listResponse)
         // expect item to be in the remote and cleared from local
         const finalState = store.getState()
-        expectInstanceMatches(finalState, testTask1.type, createdId, {
-          remote: created,
+        expectInstanceMatches(finalState, testTask1.type, creatingId, {
+          remote: creating,
           local: undefined,
           new: false,
           committed: false,
@@ -356,23 +345,24 @@ test(
 
 test('save an already pending creation', () => {
   const store = getStore()
-  const createdId = store.dispatch(jarm.create(testTask1))
-  store.dispatch(jarm.commit(testTask1.type, createdId))
+  const creatingId = store.dispatch(jarm.create(testTask1))
+  const creating = {
+    ...testTask1,
+    id: creatingId,
+  }
+  store.dispatch(jarm.commit(testTask1.type, creatingId))
 
   const delay = 200
   mockOnceDelay(
     {
-      data: {
-        ...testTask1,
-        id: createdId,
-      },
+      data: creating,
     },
     {status: 201},
     delay
   )
-  store.dispatch(jarm.save(testTask1.type, createdId))
+  store.dispatch(jarm.save(testTask1.type, creatingId))
   expect(() => {
-    store.dispatch(jarm.save(testTask1.type, createdId))
+    store.dispatch(jarm.save(testTask1.type, creatingId))
   }).toThrow()
 })
 
