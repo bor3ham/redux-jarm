@@ -167,7 +167,7 @@ test('save changed resulting in server error', done => {
     expect(finalState.committed[key]).toBeTruthy()
     expect(finalState.local[testTask1.type][testTask1.id]).toMatchObject(changes)
     expect(finalState.errors[key]).toMatchObject(error.data)
-     // assert no state mutation
+    // assert no state mutation
     expect(finalState.pending).not.toBe(initialState.pending)
     expect(finalState.errors).not.toBe(initialState.errors)
 
