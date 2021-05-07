@@ -49,6 +49,14 @@ export function save(
     const performSave = () => {
       if (instanceData === false) {
         // a deletion
+        return dispatch(fetchAction(url, {method: 'DELETE',}, {})).then(response => {
+          dispatch(ReducerActions.recordDeleteSuccess(instanceType, id))
+        }).catch((error) => {
+          dispatch(ReducerActions.recordDeleteError(
+            instanceType, id, error.data ? error.data : error
+          ))
+          throw error
+        })
       }
       else {
         if (key in state.new) {

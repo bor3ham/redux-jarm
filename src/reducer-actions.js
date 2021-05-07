@@ -8,6 +8,8 @@ const ActionKeys = {
   recordSaving: 'JARM_RECORD_SAVING',
   recordUpdateSuccess: 'JARM_RECORD_UPDATE_SUCCESS',
   recordUpdateError: 'JARM_RECORD_UPDATE_ERROR',
+  recordDeleteSuccess: 'JARM_RECORD_DELETE_SUCCESS',
+  recordDeleteError: 'JARM_RECORD_DELETE_ERROR',
   flushLocal: 'JARM_FLUSH_LOCAL',
   flushRemote: 'JARM_FLUSH_REMOTE',
 }
@@ -80,6 +82,22 @@ export function recordUpdateSuccess(initialId, createdInstance) {
 export function recordUpdateError(type, id, error) {
   return {
     type: ActionKeys.recordUpdateError,
+    instanceType: type,
+    id,
+    error,
+  }
+}
+
+export function recordDeleteSuccess(type, id) {
+  return {
+    type: ActionKeys.recordDeleteSuccess,
+    instanceType: type,
+    id,
+  }
+}
+export function recordDeleteError(type, id, error) {
+  return {
+    type: ActionKeys.recordDeleteError,
     instanceType: type,
     id,
     error,

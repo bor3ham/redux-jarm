@@ -1,6 +1,93 @@
 import * as Actions from './reducer-actions.js'
 import { instanceKey } from './utils.js'
 
+function clearKeyFromSet(set, key) {
+  if (key in set) {
+    const updatedSet = {
+      ...set,
+    }
+    delete updatedSet[key]
+    return updatedSet
+  }
+  return set
+}
+
+function clearKeyFromStore(store, key) {
+  return clearKeyFromSet(store, key)
+}
+
+// removes any references to instance from a model store, and all relationships contained within
+// that model store
+function purgeInstanceFromModelStore(modelStore, instanceType, instanceId) {
+  const itemMatches = (item) => {
+    return (
+      typeof item === 'object' &&
+      item.type === instanceType &&
+      item.id === instanceId
+    )
+  }
+  let updatedModelStore = {...modelStore}
+  let haveUpdatedModelStore = false
+  for (const storeType in modelStore) {
+    let updatedType = {...modelStore[storeType]}
+    let haveUpdatedType = false
+    for (const storeId in modelStore[storeType]) {
+      // if this instance itself matches, remove it
+      if (itemMatches(modelStore[storeType][storeId])) {
+        delete updatedType[storeId]
+        haveUpdatedType = true
+        break
+      }
+      // if it doesn't match, check its relations
+      let updatedInstance = {...modelStore[storeType][storeId]}
+      let haveUpdatedInstance = false
+      for (const relationKey in modelStore[storeType][storeId].relationships) {
+        const relationData = (
+          (modelStore[storeType][storeId].relationships[relationKey] || {}).data
+        )
+        if (Array.isArray(relationData)) {
+          const contained = !!relationData.find(itemMatches)
+          if (contained) {
+            updatedInstance.relationships[relationKey] = {
+              ...updatedInstance.relationships[relationKey],
+              data: updatedInstance.relationships[relationKey].data.filter(item => {
+                return !itemMatches(item)
+              }),
+            }
+            haveUpdatedInstance = true
+          }
+        } else {
+          if (itemMatches(relationData)) {
+            updatedInstance.relationships[relationKey] = {
+              ...updatedInstance.relationships[relationKey],
+              data: null,
+            }
+            haveUpdatedInstance = true
+          }
+        }
+      }
+      if (haveUpdatedInstance) {
+        updatedType = {
+          ...updatedType,
+          [storeId]: updatedInstance,
+        }
+        haveUpdatedType = true
+      }
+    }
+    if (haveUpdatedType) {
+      updatedModelStore = {
+        ...updatedModelStore,
+        [storeType]: updatedType,
+      }
+      haveUpdatedModelStore = true
+    }
+  }
+  if (haveUpdatedModelStore) {
+    return updatedModelStore
+  }
+  return modelStore
+}
+
 export default function reducer(state={
   remote: {},
   local: {},
@@ -303,6 +390,29 @@ export default function reducer(state={
         [key]: action.error,
       }
       return newState
+    }
+    case Actions.Keys.recordDeleteSuccess: {
+      const key = instanceKey(action.instanceType, action.id)
+      return {
+        ...state,
+        local: purgeInstanceFromModelStore(state.local, action.instanceType, action.id),
+        remote: purgeInstanceFromModelStore(state.remote, action.instanceType, action.id),
+        pending: clearKeyFromSet(state.pending, key),
+        new: clearKeyFromSet(state.new, key),
+        committed: clearKeyFromSet(state.committed, key),
+        errors: clearKeyFromStore(state.errors, key),
+      }
+    }
+    case Actions.Keys.recordDeleteError: {
+      const key = instanceKey(action.instanceType, action.id)
+      return {
+        ...state,
+        pending: clearKeyFromSet(state.pending, key),
+        errors: {
+          ...state.errors,
+          [key]: action.error,
+        },
+      }
     }
     case Actions.Keys.flushLocal: {
       if (action.instanceType === null) {
