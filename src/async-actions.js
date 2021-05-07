@@ -49,7 +49,7 @@ export function save(
     const performSave = () => {
       if (instanceData === false) {
         // a deletion
-        return dispatch(fetchAction(url, {method: 'DELETE',}, {})).then(response => {
+        return dispatch(fetchAction(`${url}${id}/`, {method: 'DELETE',}, {})).then(response => {
           dispatch(ReducerActions.recordDeleteSuccess(instanceType, id))
         }).catch((error) => {
           dispatch(ReducerActions.recordDeleteError(
