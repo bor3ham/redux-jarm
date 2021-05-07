@@ -22,6 +22,7 @@ function purgeInstanceFromModelStore(modelStore, instanceType, instanceId) {
   const itemMatches = (item) => {
     return (
       typeof item === 'object' &&
+      item !== null &&
       item.type === instanceType &&
       item.id === instanceId
     )
