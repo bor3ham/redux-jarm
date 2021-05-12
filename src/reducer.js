@@ -33,18 +33,19 @@ function purgeInstanceFromModelStore(modelStore, instanceType, instanceId) {
     let updatedType = {...modelStore[storeType]}
     let haveUpdatedType = false
     for (const storeId in modelStore[storeType]) {
+      const storeItem = modelStore[storeType][storeId]
       // if this instance itself matches, remove it
-      if (itemMatches(modelStore[storeType][storeId])) {
+      if (storeType === instanceType && storeId === instanceId) {
         delete updatedType[storeId]
         haveUpdatedType = true
         break
       }
       // if it doesn't match, check its relations
-      let updatedInstance = {...modelStore[storeType][storeId]}
+      let updatedInstance = {...storeItem}
       let haveUpdatedInstance = false
-      for (const relationKey in modelStore[storeType][storeId].relationships) {
+      for (const relationKey in storeItem.relationships) {
         const relationData = (
-          (modelStore[storeType][storeId].relationships[relationKey] || {}).data
+          (storeItem.relationships[relationKey] || {}).data
         )
         if (Array.isArray(relationData)) {
           const contained = !!relationData.find(itemMatches)
