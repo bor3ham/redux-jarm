@@ -1,7 +1,7 @@
-export create from './create.js'
-export update from './update.js'
+export { default as create } from './create.js'
+export { default as update } from './update.js'
 import deleteMethod from './delete.js'
 export { deleteMethod as delete }
 
-export commit from './commit.js'
-export discard from './discard.js'
+export { default as commit } from './commit.js'
+export { default as discard } from './discard.js'

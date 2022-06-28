@@ -2,6 +2,6 @@ language: node_js
 node_js:
   - "node"
 script:
-  - "yarn lint"
-  - "yarn test"
-  - "yarn coveralls"
+  - "npm run lint"
+  - "npm run test"
+  - "npm run coveralls"
