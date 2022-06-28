@@ -1,0 +1,33 @@
+{
+  "name": "redux-jarm-demo",
+  "version": "0.0.1",
+  "description": "Demo site for Redux-JARM.",
+  "main": "dist/demo.js",
+  "repository": "https://github.com/bor3ham/redux-jarm",
+  "author": "Michael Boreham",
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "devDependencies": {
+    "concurrently": "^7.2.2",
+    "esbuild": "^0.14.47",
+    "esbuild-stylus-loader": "^0.4.2",
+    "express": "^4.18.1",
+    "stylus": "^0.58.1"
+  },
+  "dependencies": {
+    "mireco": "^0.2.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "redux": "^4.2.0",
+    "redux-thunk": "^2.4.1"
+  },
+  "scripts": {
+    "build": "node scripts/build.js",
+    "watch": "node scripts/watch.js",
+    "prepare": "npm run build",
+    "start": "./node_modules/.bin/concurrently \"node scripts/watch.js\" \"node scripts/host.js\""
+  },
+  "peerDependencies": {}
+}

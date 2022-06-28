@@ -62,3 +62,6 @@ typings/
 
 # dist
 dist
+
+# mac bs
+.DS_Store
